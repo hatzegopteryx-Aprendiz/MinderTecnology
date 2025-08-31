@@ -6,11 +6,11 @@ La aplicación **PC Minder** está orientada a la **gestión de tiempos de mante
 Su objetivo principal es facilitar a técnicos y encargados de soporte la **programación de mantenimientos preventivos y correctivos**, evitando fallas inesperadas y mejorando la vida útil de los dispositivos.  
 
 ## Pantallas iniciales (Activities)  
-- **Pantalla de inicio de sesión** → Validación de usuario.  
-- **Menú principal** → Opciones de planificación, historial y notificaciones.  
-- **Gestión de equipos** → Listado de PCs y periféricos registrados.  
-- **Calendario de mantenimientos** → Fechas programadas.  
-- **Detalle de tarea** → Información específica del mantenimiento asignado.  
+- **Pantalla de inicio de sesión** 
+- **Menú principal**
+- **Gestión de equipos** 
+- **Calendario de mantenimientos**
+- **Detalle de tarea**
 
 ## Navegación entre pantallas (Intents y extras)  
 - **Login → Menú principal** (con datos del usuario autenticado).  
