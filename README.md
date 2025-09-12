@@ -1,5 +1,5 @@
 # Nombre de la App  
-MinderTecnology 
+MinderTecnology Prueba
 
 ## Propósito y problema que resuelve  
 La aplicación **PC Minder** está orientada a la **gestión de tiempos de mantenimiento en equipos de cómputo y periféricos**.  
