@@ -20,6 +20,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Pantallas -->
+
+        <activity android:name=".auth.login_screen" />
+        <activity android:name=".auth.main_menu" />
     </application>
 
 </manifest>
