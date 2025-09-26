@@ -69,6 +69,7 @@
         android:layout_marginStart="134dp"
         android:layout_marginTop="564dp"
         android:layout_marginEnd="135dp"
+        android:backgroundTint="#2661E4"
         android:text="Volver"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
