@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <!-- Nombre del equipo -->
+    <TextView
+        android:id="@+id/tvNombreEquipo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Nombre del equipo"
+        android:textSize="16sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <EditText
+        android:id="@+id/etNombreEquipo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Ingrese nombre del equipo"
+        android:inputType="text"
+        app:layout_constraintTop_toBottomOf="@id/tvNombreEquipo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"/>
+
+    <!-- Descripción -->
+    <TextView
+        android:id="@+id/tvDescripcion"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Descripción"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/etNombreEquipo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <EditText
+        android:id="@+id/etDescripcion"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Ingrese descripción"
+        android:inputType="textMultiLine"
+        android:minLines="3"
+        app:layout_constraintTop_toBottomOf="@id/tvDescripcion"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"/>
+
+    <!-- Última revisión -->
+    <TextView
+        android:id="@+id/tvUltimaRevision"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Última revisión"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/etDescripcion"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <EditText
+        android:id="@+id/etUltimaRevision"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="dd/mm/aaaa"
+        android:inputType="date"
+        app:layout_constraintTop_toBottomOf="@id/tvUltimaRevision"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"/>
+
+    <!-- Botones Guardar y Cancelar -->
+
+    <Button
+        android:id="@+id/btnGuardar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="336dp"
+        android:layout_marginEnd="8dp"
+        android:text="Guardar"
+        app:layout_constraintEnd_toStartOf="@+id/btnCancelar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/etUltimaRevision" />
+
+    <Button
+        android:id="@+id/btnCancelar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="336dp"
+        android:text="Cancelar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/btnGuardar"
+        app:layout_constraintTop_toBottomOf="@id/etUltimaRevision" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
