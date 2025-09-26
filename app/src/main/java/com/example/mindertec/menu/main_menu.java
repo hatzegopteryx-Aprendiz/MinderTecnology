@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mindertec.R;
 import com.example.mindertec.devices.devices_screen;
+import com.example.mindertec.devices.task_screen;
 import com.example.mindertec.profile.profile_screen;
 
 public class main_menu extends AppCompatActivity {

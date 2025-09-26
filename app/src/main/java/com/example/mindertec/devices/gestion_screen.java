@@ -1,4 +1,4 @@
-package com.example.mindertec.profile;
+package com.example.mindertec.devices;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,15 +10,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.mindertec.R;
 import com.example.mindertec.menu.main_menu;
 
-public class profile_screen extends AppCompatActivity {
+public class gestion_screen extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.perfil);
-        Button btn_back = findViewById(R.id.btn_volver_prf);
-        btn_back.setOnClickListener(v ->startActivity(new Intent(this, main_menu.class)));
+        setContentView(R.layout.gestion_equipo);
+        Button b1 = findViewById(R.id.btnCancelar);
 
-
+        b1.setOnClickListener(v ->startActivity(new Intent(this, devices_screen.class)));
 
     }
 }

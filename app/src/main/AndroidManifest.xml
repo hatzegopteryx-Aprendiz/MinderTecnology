@@ -25,6 +25,12 @@
 
         <activity android:name=".auth.login_screen" />
         <activity android:name=".menu.main_menu" />
+        <activity android:name=".devices.task_screen"/>
+        <activity android:name=".profile.profile_screen"/>
+        <activity android:name=".devices.devices_screen"/>
+        <activity android:name=".devices.gestion_screen"/>
+
+
     </application>
 
 </manifest>

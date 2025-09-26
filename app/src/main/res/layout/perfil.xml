@@ -1,62 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="24dp">
+    android:layout_height="match_parent">
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:gravity="center_horizontal">
+        tools:ignore="MissingConstraints">
 
         <!-- Foto de perfil -->
         <ImageView
             android:id="@+id/imgPerfil"
             android:layout_width="120dp"
             android:layout_height="120dp"
-            android:src="@mipmap/ic_launcher_round"
+            android:layout_marginBottom="24dp"
             android:contentDescription="Foto de perfil"
             android:scaleType="centerCrop"
-            android:layout_marginBottom="24dp"/>
+            android:src="@mipmap/ic_launcher_round" />
 
         <!-- Nombre -->
         <TextView
             android:id="@+id/tvNombre"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
             android:text="Nombre: Juan Pérez"
             android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="12dp"/>
+            android:textStyle="bold" />
 
         <!-- Cargo -->
         <TextView
             android:id="@+id/tvCargo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
             android:text="Cargo: Técnico Eléctrico"
-            android:textSize="16sp"
-            android:layout_marginBottom="12dp"/>
+            android:textSize="16sp" />
 
         <!-- Correo -->
         <TextView
             android:id="@+id/tvCorreo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
             android:text="Correo: juan.perez@empresa.com"
-            android:textSize="16sp"
-            android:layout_marginBottom="12dp"/>
+            android:textSize="16sp" />
 
         <!-- Teléfono -->
         <TextView
             android:id="@+id/tvTelefono"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
             android:text="Teléfono: +56 9 1234 5678"
-            android:textSize="16sp"
-            android:layout_marginBottom="12dp"/>
+            android:textSize="16sp" />
 
     </LinearLayout>
-</ScrollView>
+
+    <Button
+        android:id="@+id/btn_volver_prf"
+        android:layout_width="142dp"
+        android:layout_height="52dp"
+        android:layout_marginStart="134dp"
+        android:layout_marginTop="564dp"
+        android:layout_marginEnd="135dp"
+        android:text="Volver"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.875" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

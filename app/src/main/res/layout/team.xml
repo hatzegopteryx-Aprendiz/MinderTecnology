@@ -2,9 +2,24 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="24dp">
+
+    <Button
+        android:id="@+id/btn_gestion2"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="549dp"
+        android:layout_marginEnd="13dp"
+        android:text="volver"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.064"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.947" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardEquipo"
@@ -29,40 +44,55 @@
                 android:layout_width="120dp"
                 android:layout_height="120dp"
                 android:layout_gravity="center"
+                android:contentDescription="Imagen del equipo"
                 android:scaleType="centerCrop"
-                android:src="@mipmap/ic_launcher"
-                android:contentDescription="Imagen del equipo"/>
+                android:src="@mipmap/ic_launcher" />
 
             <!-- ID del equipo -->
             <TextView
                 android:id="@+id/tvIdEquipo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
                 android:text="ID: EQ-12345"
-                android:textStyle="bold"
                 android:textSize="16sp"
-                android:layout_marginTop="12dp"/>
+                android:textStyle="bold" />
 
             <!-- Descripción -->
             <TextView
                 android:id="@+id/tvDescripcion"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
                 android:text="Descripción: Motor trifásico 5HP"
-                android:textSize="14sp"
-                android:layout_marginTop="4dp"/>
+                android:textSize="14sp" />
 
             <!-- Última revisión -->
             <TextView
                 android:id="@+id/tvUltimaRevision"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:text="Última revisión: 11/09/2025"
-                android:textSize="14sp"
                 android:textColor="@android:color/holo_green_dark"
-                android:layout_marginTop="8dp"/>
+                android:textSize="14sp" />
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>
+
+    <Button
+        android:id="@+id/btn_gestion"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="274dp"
+        android:layout_marginTop="549dp"
+        android:layout_marginEnd="13dp"
+        android:layout_marginBottom="38dp"
+        android:text="gestion"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardEquipo"
+        app:layout_constraintVertical_bias="0.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
