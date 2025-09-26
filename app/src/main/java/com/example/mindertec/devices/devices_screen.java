@@ -15,10 +15,13 @@ public class devices_screen extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.team);
-        Button btn_managet = findViewById(R.id.btn_gestion);
+
+
+        Button btn_Agregar = findViewById(R.id.btn_Agregar);
         Button volver= findViewById(R.id.btn_gestion2);
+
         volver.setOnClickListener(v -> startActivity(new Intent (this, menu_screen.class)));
-        btn_managet.setOnClickListener(v ->startActivity(new Intent(this, gestion_screen.class)));
+        btn_Agregar.setOnClickListener(v ->startActivity(new Intent(this, gestion_screen.class)));
 
 
 

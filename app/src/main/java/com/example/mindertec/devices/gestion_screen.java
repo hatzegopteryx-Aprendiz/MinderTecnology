@@ -13,9 +13,10 @@ public class gestion_screen extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.gestion_equipo);
-        Button b1 = findViewById(R.id.btnCancelar);
+        setContentView(R.layout.devices);
 
+
+        Button b1 = findViewById(R.id.btnCancelar);
         b1.setOnClickListener(v ->startActivity(new Intent(this, devices_screen.class)));
 
     }
