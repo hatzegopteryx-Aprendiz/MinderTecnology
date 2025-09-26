@@ -1,12 +1,12 @@
 package com.example.mindertec;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+
+import com.example.mindertec.auth.login_screen;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -14,8 +14,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.login);
 
+        // Redirige al login_screen y cierra MainActivity
+
+        Intent login_screen = new Intent(this, login_screen.class);
+        startActivity(login_screen);
+        finish();
         
     }
 }

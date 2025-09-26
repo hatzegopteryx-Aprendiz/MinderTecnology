@@ -24,7 +24,7 @@
         <!-- Pantallas -->
 
         <activity android:name=".auth.login_screen" />
-        <activity android:name=".auth.main_menu" />
+        <activity android:name=".menu.main_menu" />
     </application>
 
 </manifest>
