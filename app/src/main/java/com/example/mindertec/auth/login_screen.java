@@ -8,7 +8,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mindertec.R;
-import com.example.mindertec.menu.main_menu;
+import com.example.mindertec.menu.menu_screen;
 
 public class login_screen  extends AppCompatActivity {
 
@@ -21,7 +21,7 @@ public class login_screen  extends AppCompatActivity {
 
         Button btn_IniciarSesion = findViewById(R.id.btn_IniciarSesion);
 
-        btn_IniciarSesion.setOnClickListener(v ->startActivity(new Intent(this, main_menu.class)));
+        btn_IniciarSesion.setOnClickListener(v ->startActivity(new Intent(this, menu_screen.class)));
 
     }
 }

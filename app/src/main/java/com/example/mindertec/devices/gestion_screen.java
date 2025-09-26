@@ -8,7 +8,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mindertec.R;
-import com.example.mindertec.menu.main_menu;
 
 public class gestion_screen extends AppCompatActivity {
     @Override

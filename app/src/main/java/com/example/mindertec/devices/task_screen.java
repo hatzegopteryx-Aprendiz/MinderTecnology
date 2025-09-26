@@ -8,15 +8,16 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mindertec.R;
-import com.example.mindertec.menu.main_menu;
+import com.example.mindertec.menu.menu_screen;
 
 public class task_screen extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.calendar);
+
         Button btn_IniciarSesion = findViewById(R.id.btn_volver_m);
-        btn_IniciarSesion.setOnClickListener(v ->startActivity(new Intent(this, main_menu.class)));
+        btn_IniciarSesion.setOnClickListener(v ->startActivity(new Intent(this, menu_screen.class)));
 
 
     }
