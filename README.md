@@ -1,9 +1,6 @@
-# Nombre de la App  
-MinderTecnology Prueba
-
-## Propósito y problema que resuelve  
-La aplicación **PC Minder** está orientada a la **gestión de tiempos de mantenimiento en equipos de cómputo y periféricos**.  
-Su objetivo principal es facilitar a técnicos y encargados de soporte la **programación de mantenimientos preventivos y correctivos**, evitando fallas inesperadas y mejorando la vida útil de los dispositivos.  
+## PC Minder - Gestión de Mantenimiento de Computadoras
+Descripción
+PC Minder es una aplicación móvil diseñada para la gestión de tiempos de mantenimiento en computadoras y dispositivos relacionados. Facilita a técnicos y encargados de soporte la programación de mantenimientos preventivos y correctivos, evitando fallas inesperadas y mejorando la vida útil de los equipos.
 
 ## Pantallas iniciales (Activities)  
 - **Pantalla de inicio de sesión** 
