@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="#DBC57F"
     android:padding="24dp">
 
     <!-- Título -->
@@ -42,6 +42,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txt_Email">
 
+        <EditText
+            android:id="@+id/txt_Email2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="128dp"
+            android:inputType="textEmailAddress" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.button.MaterialButton
@@ -63,7 +69,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="228dp"
         android:text="¿No tienes cuenta? Regístrate"
-        android:textColor="@android:color/holo_blue_dark"
+        android:textColor="@android:color/background_dark"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
@@ -71,6 +77,7 @@
 
     <EditText
         android:id="@+id/txt_Email"
+        android:hint="Correo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="68dp"

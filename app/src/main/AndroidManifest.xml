@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MinderTec">
         <activity
+            android:name=".auth.register_screen"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
@@ -19,18 +22,13 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <!-- Pantallas -->
-
+        </activity> <!-- Pantallas -->
         <activity android:name=".auth.login_screen" />
         <activity android:name=".menu.menu_screen" />
-        <activity android:name=".devices.task_screen"/>
-        <activity android:name=".profile.profile_screen"/>
-        <activity android:name=".devices.devices_screen"/>
-        <activity android:name=".devices.gestion_screen"/>
-
-
+        <activity android:name=".devices.task_screen" />
+        <activity android:name=".profile.profile_screen" />
+        <activity android:name=".devices.devices_screen" />
+        <activity android:name=".devices.gestion_screen" />
     </application>
 
 </manifest>

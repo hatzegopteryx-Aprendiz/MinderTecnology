@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1037953466283",
+    "project_id": "mindertecnology",
+    "storage_bucket": "mindertecnology.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1037953466283:android:0ab9af715e51b99142dcee",
+        "android_client_info": {
+          "package_name": "com.example.mindertec"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBLPM_dGmx7rzXweH5fC0DEgoyrYh46nwI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -22,10 +22,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.example.mindertec" />
+                  <option name="mobileSdkAppId" value="1:1037953466283:android:0ab9af715e51b99142dcee" />
+                  <option name="projectId" value="mindertecnology" />
+                  <option name="projectNumber" value="1037953466283" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
