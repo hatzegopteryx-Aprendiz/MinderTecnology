@@ -102,6 +102,8 @@ cd MinderTecnology
 
 # Abrir en Android Studio
 -----
+```
 ## 🔥confguracion firebase
+
 
 
