@@ -84,14 +84,14 @@ Está pensada para técnicos y encargados de soporte que necesitan **organizar, 
 
 ## ⚙️ Instalación y configuración
 
-### 🔧 Prerrequisitos
+### Prerrequisitos
 
 - **Android Studio** (versión *Android Narwhal 3* o superior)  
 - **JDK 11** o superior  
 - **SDK de Android API 26 (Android 8.0)** o superior  
 - **Dispositivo Android o emulador** con Google Play Services  
 
-### 🚀 Instalación
+### Instalación
 
 ```bash
 # Clonar el repositorio
@@ -101,3 +101,7 @@ git clone https://github.com/hatzegopteryx-Aprendiz/MinderTecnology.git
 cd MinderTecnology
 
 # Abrir en Android Studio
+-----
+## 🔥confguracion firebase
+
+
