@@ -8,10 +8,14 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mindertec.R;
 import com.example.mindertec.menu.menu_screen;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -43,6 +47,7 @@ public class login_screen  extends AppCompatActivity {
                 contrasena = txt_Contrasena.getText().toString();
 
                 if(!correo.isEmpty() && !contrasena.isEmpty()) {
+                    loginUser();
 
                 }else {
                     Toast.makeText(login_screen.this,"Complete los campos",Toast.LENGTH_SHORT).show();
@@ -50,11 +55,22 @@ public class login_screen  extends AppCompatActivity {
             }
         });
 
-
-        btn_IniciarSesion.setOnClickListener(v ->startActivity(new Intent(this, menu_screen.class)));
-
     }
 
+    private void loginUser(){
+        mAuth.signInWithEmailAndPassword(correo,contrasena).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()){
+                    startActivity(new Intent(login_screen.this,menu_screen.class));
+                    finish();
+                }else {
+                    Toast.makeText(login_screen.this,"Correo o contraseña incorrectos", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+    }
 
 }
 
