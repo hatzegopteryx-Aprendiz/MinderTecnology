@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#EFEBE9"
+    android:backgroundTint="#EFEBE9"
     android:padding="24dp">
 
     <Button
@@ -13,7 +14,7 @@
         android:layout_height="50dp"
         android:layout_marginTop="549dp"
         android:layout_marginEnd="13dp"
-        android:backgroundTint="#2661E4"
+        android:backgroundTint="#6D4C41"
         android:text="volver"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -22,13 +23,14 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.952" />
 
+
     <Button
         android:id="@+id/btn_Agregar"
         android:layout_width="100dp"
         android:layout_height="50dp"
         android:layout_marginTop="549dp"
         android:layout_marginEnd="13dp"
-        android:backgroundTint="#2661E4"
+        android:backgroundTint="#6D4C41"
         android:text="Añadir"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -44,13 +46,15 @@
         android:layout_margin="16dp"
         app:cardCornerRadius="12dp"
         app:cardElevation="6dp"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="#D7CCC8"
+            android:backgroundTint="#D7CCC8"
             android:orientation="vertical"
             android:padding="16dp">
 
@@ -71,6 +75,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:text="ID: EQ-12345"
+                android:textColor="#3E2723"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -81,6 +86,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="Descripción: Motor trifásico 5HP"
+                android:textColor="#3E2723"
                 android:textSize="14sp" />
 
             <!-- Última revisión -->
@@ -90,25 +96,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="Última revisión: 11/09/2025"
-                android:textColor="@android:color/holo_green_dark"
+                android:textColor="#C67C48"
                 android:textSize="14sp" />
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-    <Button
-        android:id="@+id/btn_gestion"
-        android:layout_width="100dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="274dp"
-        android:layout_marginTop="549dp"
-        android:layout_marginEnd="13dp"
-        android:layout_marginBottom="38dp"
-        android:text="gestion"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardEquipo"
-        app:layout_constraintVertical_bias="0.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

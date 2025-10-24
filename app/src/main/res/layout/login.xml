@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#DBC57F"
+    android:background="#D7CCC8"
     android:padding="24dp">
 
     <!-- Título -->
@@ -24,6 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="84dp"
         android:text="MinderTecnology"
+        android:textColor="#3E2723"
         android:textSize="26sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -55,9 +56,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="48dp"
-        android:background="#2460E6"
+        android:background="#E67224"
         android:text="Iniciar Sesión"
-        app:backgroundTint="#2661E4"
+        app:backgroundTint="#4E342E"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -69,7 +70,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="228dp"
         android:text="¿No tienes cuenta? Regístrate"
-        android:textColor="@android:color/background_dark"
+        android:textColor="#A66A4C"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
@@ -77,10 +78,10 @@
 
     <EditText
         android:id="@+id/txt_Email"
-        android:hint="Correo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="68dp"
+        android:hint="Correo"
         android:inputType="textEmailAddress"
         app:layout_constraintTop_toBottomOf="@+id/txt_InicioSesion"
         tools:layout_editor_absoluteX="16dp" />

@@ -4,45 +4,49 @@
     android:layout_height="match_parent">
 
 
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
-
-    <!-- Calendario -->
-    <CalendarView
-        android:id="@+id/calendarView"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"/>
+        android:layout_height="match_parent"
+        android:background="#EFEBE9"
+        android:backgroundTint="#EFEBE9"
+        android:orientation="vertical"
+        android:padding="16dp">
 
-    <!-- Título de actividades -->
-    <TextView
-        android:id="@+id/tvActividades"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Actividades del día:"
-        android:textStyle="bold"
-        android:textSize="16sp"
-        android:layout_marginBottom="8dp"/>
+        <!-- Calendario -->
+        <CalendarView
+            android:id="@+id/calendarView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:background="#D7CCC8" />
 
-    <!-- Lista de actividades -->
-    <ListView
-        android:id="@+id/listActividades"
-        android:layout_width="match_parent"
-        android:layout_height="429dp"
-        android:layout_weight="1"
-        android:divider="@android:color/darker_gray"
-        android:dividerHeight="1dp" />
+        <!-- Título de actividades -->
+        <TextView
+            android:id="@+id/tvActividades"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="Actividades del día:"
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
-    <Button
-        android:id="@+id/btn_volver_m"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:backgroundTint="#2661E4"
-        android:text="volver" />
+        <!-- Lista de actividades -->
+        <ListView
+            android:id="@+id/listActividades"
+            android:layout_width="match_parent"
+            android:layout_height="429dp"
+            android:layout_weight="1"
+            android:background="#D7CCC8"
+            android:divider="@android:color/darker_gray"
+            android:dividerHeight="1dp" />
 
-</LinearLayout>
+        <Button
+            android:id="@+id/btn_volver_m"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#6D4C41"
+            android:text="volver" />
+
+    </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
