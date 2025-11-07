@@ -32,10 +32,24 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceView
     @Override
     public void onBindViewHolder(@NonNull DeviceViewHolder holder, int position) {
         Device device = deviceList.get(position);
-        holder.tvNombreEquipo.setText("Equipo: " + device.getNombre());
-        holder.tvMarca.setText("Marca: " + device.getMarca());
-        holder.tvDescripcion.setText("Descripción: " + device.getDescripcion());
-        holder.tvUltimaRevision.setText("Última revisión: " + device.getUltimaRevision());
+        
+        // Manejar valores null para evitar crashes
+        String nombre = device.getNombre() != null ? device.getNombre() : "Sin nombre";
+        String marca = device.getMarca() != null ? device.getMarca() : "Sin marca";
+        String descripcion = device.getDescripcion() != null ? device.getDescripcion() : "Sin descripción";
+        String ultimaRevision = device.getUltimaRevision() != null ? device.getUltimaRevision() : "Sin fecha";
+        String deviceId = device.getDeviceId() != null ? device.getDeviceId() : "N/A";
+        
+        // Actualizar los TextViews con los datos del dispositivo
+        if (holder.tvIdEquipo != null) {
+            holder.tvIdEquipo.setText("Equipo: " + nombre + " | Marca: " + marca + " | ID: " + deviceId);
+        }
+        if (holder.tvDescripcion != null) {
+            holder.tvDescripcion.setText("Descripción: " + descripcion);
+        }
+        if (holder.tvUltimaRevision != null) {
+            holder.tvUltimaRevision.setText("Última revisión: " + ultimaRevision);
+        }
     }
 
     @Override
@@ -44,14 +58,13 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceView
     }
 
     public static class DeviceViewHolder extends RecyclerView.ViewHolder {
-        TextView tvNombreEquipo, tvMarca, tvDescripcion, tvUltimaRevision;
+        TextView tvIdEquipo, tvDescripcion, tvUltimaRevision;
 
         public DeviceViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvNombreEquipo = itemView.findViewById(R.id.tvNombreEquipo);
-            tvMarca = itemView.findViewById(R.id.tvMarca);
-            tvDescripcion = itemView.findViewById(R.id.tvDescripcionEquipo);
-            tvUltimaRevision = itemView.findViewById(R.id.tvUltimaRevisionEquipo);
+            tvIdEquipo = itemView.findViewById(R.id.tvIdEquipo);
+            tvDescripcion = itemView.findViewById(R.id.tvDescripcion);
+            tvUltimaRevision = itemView.findViewById(R.id.tvUltimaRevision);
         }
     }
 }

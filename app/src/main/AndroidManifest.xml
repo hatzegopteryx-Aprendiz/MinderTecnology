@@ -30,5 +30,4 @@
         <activity android:name=".devices.devices_screen" />
         <activity android:name=".devices.gestion_screen" />
     </application>
-
 </manifest>
