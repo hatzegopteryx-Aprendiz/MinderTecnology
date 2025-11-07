@@ -69,6 +69,8 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="24dp">
+
+            <!-- Campo Nombre del equipo -->
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -82,10 +84,31 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Nombre del equipo"
-                    android:inputType="text"
+                    android:inputType="textCapWords"
                     android:textColor="#5D4037"
                     android:textSize="16sp" />
             </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Campo Marca -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:boxStrokeColor="#6D4C41"
+                app:hintTextColor="#6D4C41"
+                app:startIconDrawable="@android:drawable/ic_menu_view"
+                app:startIconTint="#6D4C41">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etMarca"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Marca"
+                    android:inputType="textCapWords"
+                    android:textColor="#5D4037"
+                    android:textSize="16sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Campo Descripción -->
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -107,6 +130,28 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Campo Última intervención -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:boxStrokeColor="#6D4C41"
+                app:hintTextColor="#6D4C41"
+                app:startIconDrawable="@android:drawable/ic_menu_myplaces"
+                app:startIconTint="#6D4C41">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etUltimoTecnico"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:focusable="false"
+                    android:hint="Última intervención"
+                    android:textColor="#5D4037"
+                    android:textSize="16sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
             <!-- Campo Última revisión -->
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
@@ -121,8 +166,10 @@
                     android:id="@+id/etUltimaRevision"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Última revisión (dd/mm/aaaa)"
-                    android:inputType="date"
+                    android:hint="Última revisión"
+                    android:focusable="false"
+                    android:clickable="true"
+                    android:inputType="none"
                     android:textColor="#5D4037"
                     android:textSize="16sp" />
 

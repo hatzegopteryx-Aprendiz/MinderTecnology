@@ -6,19 +6,13 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mindertec.R;
+import com.example.mindertec.controllers.AuthController;
 import com.example.mindertec.menu.menu_screen;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.FirebaseDatabase;
 
 public class login_screen  extends AppCompatActivity {
 
@@ -27,7 +21,7 @@ public class login_screen  extends AppCompatActivity {
 
     private String correo,contrasena;
 
-    private FirebaseAuth mAuth;
+    private AuthController authController;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -35,7 +29,8 @@ public class login_screen  extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.login);
 
-        mAuth = FirebaseAuth.getInstance();
+        // Inicializar controlador MVC
+        authController = new AuthController(this);
 
         txt_Email = findViewById(R.id.txt_Email);
         txt_Contrasena = findViewById(R.id.txt_Email2);
@@ -48,12 +43,7 @@ public class login_screen  extends AppCompatActivity {
                 correo = txt_Email.getText().toString();
                 contrasena = txt_Contrasena.getText().toString();
 
-                if(!correo.isEmpty() && !contrasena.isEmpty()) {
-                    loginUser();
-
-                }else {
-                    Toast.makeText(login_screen.this,"Complete los campos",Toast.LENGTH_SHORT).show();
-                }
+                loginUser();
             }
         });
 
@@ -68,16 +58,22 @@ public class login_screen  extends AppCompatActivity {
     }
 
     private void loginUser(){
-        mAuth.signInWithEmailAndPassword(correo,contrasena).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+        authController.login(correo, contrasena, new AuthController.LoginListener() {
             @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()){
-                    startActivity(new Intent(login_screen.this,menu_screen.class));
-                    finish();
-                }else {
-                    Toast.makeText(login_screen.this,"Correo o contraseña incorrectos", Toast.LENGTH_SHORT).show();
-                }
+            public void onLoginSuccess(com.example.mindertec.models.User user) {
+                // Mostrar mensaje de éxito
+                Toast.makeText(login_screen.this, 
+                        "Sesión iniciada correctamente", 
+                        Toast.LENGTH_SHORT).show();
+                
+                // Ir al menú principal inmediatamente
+                startActivity(new Intent(login_screen.this, menu_screen.class));
+                finish();
+            }
 
+            @Override
+            public void onLoginError(String errorMessage) {
+                Toast.makeText(login_screen.this, errorMessage, Toast.LENGTH_SHORT).show();
             }
         });
     }

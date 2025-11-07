@@ -13,17 +13,13 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.example.mindertec.R;
 import com.example.mindertec.auth.login_screen;
+import com.example.mindertec.auth.session_manager_screen;
 import com.example.mindertec.devices.devices_screen;
 import com.example.mindertec.devices.task_screen;
 import com.example.mindertec.profile.profile_screen;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 public class menu_screen extends AppCompatActivity {
 
@@ -40,7 +36,7 @@ public class menu_screen extends AppCompatActivity {
 
     // Variables de Firebase
     private FirebaseAuth mAuth;
-    private DatabaseReference mDatabase;
+    private session_manager_screen sessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +45,7 @@ public class menu_screen extends AppCompatActivity {
 
         // Inicializar Firebase
         mAuth = FirebaseAuth.getInstance();
-        mDatabase = FirebaseDatabase.getInstance().getReference();
+        sessionManager = new session_manager_screen(this);
 
         initializeViews();
         setupListeners();
@@ -77,25 +73,21 @@ public class menu_screen extends AppCompatActivity {
     }
 
     private void setupListeners() {
-        // Botón hamburguesa para mostrar/ocultar menú
         btnMenuToggle.setOnClickListener(v -> toggleMenu());
-
-        // Botón de cerrar menú
         btnCloseMenu.setOnClickListener(v -> closeMenu());
-
-        // Overlay para cerrar menú al tocar fuera
         menuOverlay.setOnClickListener(v -> closeMenu());
-
-        // Cards del menú lateral
         MaterialCardView cardDispositivos = findViewById(R.id.card_dispositivos);
         cardDispositivos.setOnClickListener(v -> {
-            showDevicesSection();
+            Intent intent = new Intent(menu_screen.this, devices_screen.class);
+            startActivity(intent);
             closeMenu();
         });
 
         MaterialCardView cardPerfil = findViewById(R.id.card_perfil);
         cardPerfil.setOnClickListener(v -> {
-            showProfileSection();
+            // Abrir la Activity de perfil
+            Intent intent = new Intent(menu_screen.this, profile_screen.class);
+            startActivity(intent);
             closeMenu();
         });
 
@@ -107,7 +99,11 @@ public class menu_screen extends AppCompatActivity {
 
         MaterialButton btnVolver = findViewById(R.id.btn_VolverMenu);
         btnVolver.setOnClickListener(v -> {
+            // Cerrar sesión y limpiar datos
+            sessionManager.logout();
+            mAuth.signOut();
             startActivity(new Intent(this, login_screen.class));
+            finish();
         });
     }
 
@@ -125,26 +121,13 @@ public class menu_screen extends AppCompatActivity {
     }
 
     private void showDevicesSection() {
-        currentSection = "devices";
-        sectionTitle.setText("Dispositivos");
-        sectionSubtitle.setText("Gestiona tus dispositivos conectados");
-
-        // Ocultar dashboard
-        dashboardContent.setVisibility(View.GONE);
-
-        // Crear contenido dinámico para dispositivos
-        createDevicesContent();
     }
 
     private void showProfileSection() {
         currentSection = "profile";
         sectionTitle.setText("Perfil");
         sectionSubtitle.setText("Información y configuración del usuario");
-
-        // Ocultar dashboard
         dashboardContent.setVisibility(View.GONE);
-
-        // Crear contenido dinámico para perfil
         createProfileContent();
     }
 
@@ -200,46 +183,8 @@ public class menu_screen extends AppCompatActivity {
     }
 
     private void createProfileContent() {
-        contentContainer.removeAllViews();
-        View profileView = getLayoutInflater().inflate(R.layout.profile, contentContainer, false);
-        String userName = getUserName();
-        TextView tvNombre = profileView.findViewById(R.id.tvNombre);
-        tvNombre.setText(userName);
-        com.google.android.material.button.MaterialButton btnVolverPerfil = profileView.findViewById(R.id.btn_volver_prf);
-        btnVolverPerfil.setOnClickListener(v -> showDashboard());
-        contentContainer.addView(profileView);
-    }
-
-    private String getUserName() {
-        if (mAuth.getCurrentUser() != null) {
-            String userId = mAuth.getCurrentUser().getUid();
-            mDatabase.child("Usuarios").child(userId).child("nombre")
-                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            if (dataSnapshot.exists()) {
-                                String userName = dataSnapshot.getValue(String.class);
-                                // Actualizar el TextView del perfil si está visible
-                                updateProfileName(userName);
-                            }
-                        }
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-                            updateProfileName("nombre");
-                        }
-                    });
-        }
-
-        // Retornar nombre por defecto mientras se carga desde Firebase
-        return "Cargando...";
-    }
-
-    private void updateProfileName(String userName) {
-        // Buscar el TextView del nombre en el perfil si está visible
-        TextView tvNombre = findViewById(R.id.tvNombre);
-        if (tvNombre != null) {
-            tvNombre.setText(userName);
-        }
+        // Este método ya no se usa, se abre directamente la Activity profile_screen
+        // Se mantiene por compatibilidad pero no se llama
     }
 
     private void createTasksContent() {
