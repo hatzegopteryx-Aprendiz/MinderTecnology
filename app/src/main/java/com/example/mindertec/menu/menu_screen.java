@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
@@ -20,6 +21,11 @@ import com.example.mindertec.profile.profile_screen;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class menu_screen extends AppCompatActivity {
 
@@ -37,6 +43,9 @@ public class menu_screen extends AppCompatActivity {
     // Variables de Firebase
     private FirebaseAuth mAuth;
     private session_manager_screen sessionManager;
+    private DatabaseReference mDatabase;
+    private TextView tvDeviceCount;
+    private ValueEventListener deviceCountListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,12 +54,14 @@ public class menu_screen extends AppCompatActivity {
 
         // Inicializar Firebase
         mAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance().getReference("Dispositivos");
         sessionManager = new session_manager_screen(this);
 
         initializeViews();
         setupListeners();
         initializeMenuPosition();
         showDashboard();
+        loadDeviceCount();
     }
 
     private void initializeViews() {
@@ -62,6 +73,7 @@ public class menu_screen extends AppCompatActivity {
         menuOverlay = findViewById(R.id.menu_overlay);
         btnMenuToggle = findViewById(R.id.btn_menu_toggle);
         btnCloseMenu = findViewById(R.id.btn_close_menu);
+        tvDeviceCount = findViewById(R.id.tvDeviceCount);
     }
 
     private void initializeMenuPosition() {
@@ -250,5 +262,53 @@ public class menu_screen extends AppCompatActivity {
                 slidingMenu.setTranslationX(-1000f);
             }
         });
+    }
+
+    private void loadDeviceCount() {
+        if (mAuth.getCurrentUser() == null) {
+            if (tvDeviceCount != null) {
+                tvDeviceCount.setText("0");
+            }
+            return;
+        }
+
+        String userId = mAuth.getCurrentUser().getUid();
+        DatabaseReference userDevicesRef = mDatabase.child(userId);
+
+        deviceCountListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                int deviceCount = 0;
+                if (snapshot.exists() && snapshot.hasChildren()) {
+                    deviceCount = (int) snapshot.getChildrenCount();
+                }
+                
+                if (tvDeviceCount != null) {
+                    tvDeviceCount.setText(String.valueOf(deviceCount));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // En caso de error, mantener el contador en 0 o el último valor
+                if (tvDeviceCount != null) {
+                    tvDeviceCount.setText("0");
+                }
+            }
+        };
+
+        userDevicesRef.addValueEventListener(deviceCountListener);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Remover el listener para evitar memory leaks
+        if (deviceCountListener != null && mDatabase != null && mAuth.getCurrentUser() != null) {
+            String userId = mAuth.getCurrentUser().getUid();
+            if (userId != null) {
+                mDatabase.child(userId).removeEventListener(deviceCountListener);
+            }
+        }
     }
 }
