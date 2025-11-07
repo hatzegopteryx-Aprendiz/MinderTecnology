@@ -5,102 +5,37 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#EFEBE9"
-    android:backgroundTint="#EFEBE9"
     android:padding="24dp">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerDevices"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:padding="4dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/btn_Agregar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <Button
         android:id="@+id/btn_gestion2"
         android:layout_width="100dp"
         android:layout_height="50dp"
-        android:layout_marginTop="549dp"
-        android:layout_marginEnd="13dp"
         android:backgroundTint="#6D4C41"
-        android:text="volver"
+        android:text="Volver"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.156"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.952" />
-
+        app:layout_constraintVertical_bias="0.95" />
 
     <Button
         android:id="@+id/btn_Agregar"
         android:layout_width="100dp"
         android:layout_height="50dp"
-        android:layout_marginTop="549dp"
-        android:layout_marginEnd="13dp"
         android:backgroundTint="#6D4C41"
         android:text="Añadir"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.888"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.952" />
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardEquipo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="6dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#D7CCC8"
-            android:backgroundTint="#D7CCC8"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <!-- Imagen del equipo -->
-            <ImageView
-                android:id="@+id/imgEquipo"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:layout_gravity="center"
-                android:contentDescription="Imagen del equipo"
-                android:scaleType="centerCrop"
-                android:src="@mipmap/ic_launcher" />
-
-            <!-- ID del equipo -->
-            <TextView
-                android:id="@+id/tvIdEquipo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="ID: EQ-12345"
-                android:textColor="#3E2723"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-            <!-- Descripción -->
-            <TextView
-                android:id="@+id/tvDescripcion"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="Descripción: Motor trifásico 5HP"
-                android:textColor="#3E2723"
-                android:textSize="14sp" />
-
-            <!-- Última revisión -->
-            <TextView
-                android:id="@+id/tvUltimaRevision"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Última revisión: 11/09/2025"
-                android:textColor="#C67C48"
-                android:textSize="14sp" />
-
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
-
+        app:layout_constraintVertical_bias="0.95" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

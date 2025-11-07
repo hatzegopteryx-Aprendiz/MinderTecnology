@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardDevice"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="6dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="#D7CCC8">
+
+        <TextView
+            android:id="@+id/tvNombreEquipo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nombre del equipo"
+            android:textStyle="bold"
+            android:textColor="#3E2723"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/tvMarca"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Marca"
+            android:textColor="#5D4037"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/tvDescripcionEquipo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Descripción"
+            android:textColor="#5D4037"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tvUltimaRevisionEquipo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Última revisión"
+            android:textColor="#C67C48"
+            android:textSize="14sp"
+            android:layout_marginTop="6dp" />
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
