@@ -15,12 +15,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-
-        // Redirige al login_screen y cierra MainActivity
-
-        Intent login_screen = new Intent(this, register_screen.class);
+        Intent login_screen = new Intent(this, login_screen.class);
         startActivity(login_screen);
         finish();
-        
     }
 }

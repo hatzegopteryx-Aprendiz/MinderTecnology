@@ -3,8 +3,6 @@ package com.example.mindertec.auth;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -15,14 +13,17 @@ import com.example.mindertec.R;
 import com.example.mindertec.menu.menu_screen;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class login_screen  extends AppCompatActivity {
 
-    private EditText txt_Email, txt_Contrasena;
-    private Button btn_IniciarSesion;
+    private TextInputEditText txt_Email, txt_Contrasena;
+    private MaterialButton btn_IniciarSesion, btn_CrearCuenta;
 
     private String correo,contrasena;
 
@@ -39,6 +40,7 @@ public class login_screen  extends AppCompatActivity {
         txt_Email = findViewById(R.id.txt_Email);
         txt_Contrasena = findViewById(R.id.txt_Email2);
         btn_IniciarSesion = findViewById(R.id.btn_IniciarSesion);
+        btn_CrearCuenta = findViewById(R.id.btn_Registrar);
 
         btn_IniciarSesion.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,6 +54,14 @@ public class login_screen  extends AppCompatActivity {
                 }else {
                     Toast.makeText(login_screen.this,"Complete los campos",Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+
+        btn_CrearCuenta.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(login_screen.this, register_screen.class);
+                startActivity(intent);
             }
         });
 

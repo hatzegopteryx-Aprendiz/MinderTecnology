@@ -76,8 +76,6 @@ public class register_screen extends AppCompatActivity {
                 }
             }
         });
-
-
         Button btn_Volver = findViewById(R.id.btn_Volver);
         btn_Volver.setOnClickListener(v ->startActivity(new Intent(this, login_screen.class)));
 
@@ -88,7 +86,6 @@ public class register_screen extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()){
-
                     Map<String,Object> map = new HashMap<>();
                     map.put("nombre",nombre);
                     map.put("correo", correo);
@@ -107,7 +104,6 @@ public class register_screen extends AppCompatActivity {
                             }
                         }
                     });
-
                 }else {
                     Toast.makeText(register_screen.this, "Cuenta creada correctamente",Toast.LENGTH_SHORT).show();
 
