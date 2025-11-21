@@ -4,11 +4,13 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 public class session_manager_screen {
+
     private static final String PREF_NAME = "MinderTecSession";
     private static final String KEY_USER_ID = "userId";
     private static final String KEY_USER_NAME = "userName";
     private static final String KEY_USER_EMAIL = "userEmail";
     private static final String KEY_IS_LOGGED_IN = "isLoggedIn";
+    private static final String KEY_USER_PHOTO = "userPhoto"; // <- NUEVO
 
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
@@ -26,7 +28,20 @@ public class session_manager_screen {
         editor.putString(KEY_USER_NAME, userName);
         editor.putString(KEY_USER_EMAIL, userEmail);
         editor.putBoolean(KEY_IS_LOGGED_IN, true);
+
+        // No tocar la foto aquí; se actualiza solo cuando el usuario sube imagen
         editor.apply();
+    }
+
+    // Guardar URL de la foto del usuario (NUEVO)
+    public void saveUserPhoto(String url) {
+        editor.putString(KEY_USER_PHOTO, url);
+        editor.apply();
+    }
+
+    // Obtener URL de la foto (NUEVO)
+    public String getUserPhoto() {
+        return sharedPreferences.getString(KEY_USER_PHOTO, "");
     }
 
     // Obtener ID del usuario
