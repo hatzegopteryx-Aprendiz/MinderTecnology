@@ -17,15 +17,22 @@ public class User {
     public User(String nombre, String correo) {
         this.nombre = nombre;
         this.correo = correo;
+
         // Generar fecha de registro automáticamente
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         this.fechaRegistro = sdf.format(new Date());
+
+        // Inicializar fotoUrl vacío
+        this.fotoUrl = "";
     }
 
     public User(String nombre, String correo, String fechaRegistro) {
         this.nombre = nombre;
         this.correo = correo;
         this.fechaRegistro = fechaRegistro;
+
+        // Inicializar también aquí
+        this.fotoUrl = "";
     }
 
     // Getters y Setters
@@ -61,4 +68,3 @@ public class User {
         this.fotoUrl = fotoUrl;
     }
 }
-

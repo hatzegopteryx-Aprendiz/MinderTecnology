@@ -32,7 +32,7 @@
         <activity android:name=".profile.profile_screen" />
         <activity android:name=".devices.devices_screen" />
         <activity android:name=".devices.gestion_screen" />
-        
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -42,5 +42,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
     </application>
 </manifest>
