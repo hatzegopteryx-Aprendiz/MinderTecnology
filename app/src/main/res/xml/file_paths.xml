@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths xmlns:android="http://schemas.android.com/apk/res/android">
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     <!-- Permite guardar imágenes dentro de /Android/data/tuapp/files/ -->
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
     <external-files-path
