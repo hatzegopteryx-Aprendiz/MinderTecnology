@@ -78,8 +78,8 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
             android:layout_marginBottom="16dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -336,7 +336,7 @@
                 android:minHeight="64dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="8dp"
                 app:cardBackgroundColor="#8D6E63"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="4dp"
@@ -377,6 +377,22 @@
 
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- Card de espacio vertical -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/spacer_card_1"
+                android:layout_width="match_parent"
+                android:layout_height="24dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="8dp"
+                app:cardBackgroundColor="#6D4C41"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/card_dispositivos"
+                app:strokeWidth="0dp" />
+
             <!-- Opción Perfil -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/card_perfil"
@@ -385,13 +401,13 @@
                 android:minHeight="64dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="8dp"
                 app:cardBackgroundColor="#8D6E63"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="4dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/card_dispositivos"
+                app:layout_constraintTop_toBottomOf="@id/spacer_card_1"
                 app:strokeWidth="0dp">
 
                 <LinearLayout
@@ -426,6 +442,22 @@
 
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- Card de espacio vertical -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/spacer_card_2"
+                android:layout_width="match_parent"
+                android:layout_height="24dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="8dp"
+                app:cardBackgroundColor="#6D4C41"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/card_perfil"
+                app:strokeWidth="0dp" />
+
             <!-- Opción Tareas -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/card_tareas"
@@ -440,7 +472,7 @@
                 app:cardElevation="4dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/card_perfil"
+                app:layout_constraintTop_toBottomOf="@id/spacer_card_2"
                 app:strokeWidth="0dp">
 
                 <LinearLayout
