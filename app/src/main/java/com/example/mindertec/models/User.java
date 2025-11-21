@@ -8,6 +8,7 @@ public class User {
     private String nombre;
     private String correo;
     private String fechaRegistro;
+    private String fotoUrl;
 
     public User() {
         // Constructor vacío requerido por Firebase
@@ -50,6 +51,14 @@ public class User {
 
     public void setFechaRegistro(String fechaRegistro) {
         this.fechaRegistro = fechaRegistro;
+    }
+
+    public String getFotoUrl() {
+        return fotoUrl;
+    }
+
+    public void setFotoUrl(String fotoUrl) {
+        this.fotoUrl = fotoUrl;
     }
 }
 

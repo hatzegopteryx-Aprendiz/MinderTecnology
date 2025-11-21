@@ -4,6 +4,8 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
+import android.net.Uri;
+
 import com.example.mindertec.auth.session_manager_screen;
 import com.example.mindertec.models.User;
 import com.google.firebase.auth.FirebaseAuth;
@@ -12,15 +14,20 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 public class UserRepository {
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
+    private StorageReference mStorageRef;
     private session_manager_screen sessionManager;
 
     public UserRepository(Context context) {
         this.mAuth = FirebaseAuth.getInstance();
         this.mDatabase = FirebaseDatabase.getInstance().getReference();
+        this.mStorageRef = FirebaseStorage.getInstance().getReference();
         this.sessionManager = new session_manager_screen(context);
     }
 
@@ -37,6 +44,12 @@ public class UserRepository {
     public interface UserDataCallback {
         void onDataLoaded(User user);
         void onError(String errorMessage);
+    }
+
+    public interface UploadPhotoCallback {
+        void onSuccess(String photoUrl);
+        void onError(String errorMessage);
+        void onProgress(double progress);
     }
 
     public void loginUser(String correo, String contrasena, LoginCallback callback) {
@@ -192,6 +205,47 @@ public class UserRepository {
         } else {
             return "Error al crear cuenta: " + exceptionMessage;
         }
+    }
+
+    public void uploadProfilePhoto(Uri photoUri, UploadPhotoCallback callback) {
+        if (mAuth.getCurrentUser() == null) {
+            callback.onError("Usuario no autenticado");
+            return;
+        }
+
+        String userId = mAuth.getCurrentUser().getUid();
+        String fileName = "profile_photos/" + userId + "_" + System.currentTimeMillis() + ".jpg";
+        StorageReference photoRef = mStorageRef.child(fileName);
+
+        UploadTask uploadTask = photoRef.putFile(photoUri);
+        
+        uploadTask.addOnProgressListener(taskSnapshot -> {
+            double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+            callback.onProgress(progress);
+        });
+
+        uploadTask.addOnSuccessListener(taskSnapshot -> {
+            photoRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                String photoUrl = uri.toString();
+                // Actualizar la URL de la foto en la base de datos
+                updateUserPhotoUrl(userId, photoUrl, callback);
+            }).addOnFailureListener(e -> {
+                callback.onError("Error al obtener URL de la foto: " + e.getMessage());
+            });
+        }).addOnFailureListener(e -> {
+            callback.onError("Error al subir la foto: " + e.getMessage());
+        });
+    }
+
+    private void updateUserPhotoUrl(String userId, String photoUrl, UploadPhotoCallback callback) {
+        mDatabase.child("Usuarios").child(userId).child("fotoUrl").setValue(photoUrl)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        callback.onSuccess(photoUrl);
+                    } else {
+                        callback.onError("Error al actualizar la URL de la foto en la base de datos");
+                    }
+                });
     }
 }
 
