@@ -7,7 +7,9 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -27,6 +29,7 @@ import com.example.mindertec.menu.menu_screen;
 import com.example.mindertec.repositories.UserRepository;
 import com.google.android.material.button.MaterialButton;
 import com.squareup.picasso.Picasso;
+
 
 import java.io.File;
 import java.io.IOException;
@@ -77,23 +80,19 @@ public class profile_screen extends AppCompatActivity {
                     if (result) {
                         if (photoUri != null) {
                             try {
-                                // Obtener bitmap desde la URI
                                 if (Build.VERSION.SDK_INT < 28) {
                                     currentPhotoBitmap = MediaStore.Images.Media.getBitmap(
                                             getContentResolver(), photoUri);
-                                } else {
-                                    currentPhotoBitmap = null; // Opcional: si no necesitas el Bitmap en sí
                                 }
 
-                                // Mostrar la imagen en el ImageView
                                 imgPerfil.setImageURI(photoUri);
 
-                                // Subir la foto a Firebase Storage + guardar URL en BD
                                 uploadPhotoToFirebase(photoUri);
 
                             } catch (IOException e) {
                                 e.printStackTrace();
-                                Toast.makeText(this, "Error al cargar la foto", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(this, "Error al cargar la foto",
+                                        Toast.LENGTH_SHORT).show();
                             }
                         }
                     }
@@ -109,7 +108,6 @@ public class profile_screen extends AppCompatActivity {
             @Override
             public void onSuccess(String photoUrl) {
                 runOnUiThread(() -> {
-                    // Guardar URL en la sesión para acceso rápido
                     sessionManager.saveUserPhoto(photoUrl);
 
                     btnCamera.setEnabled(true);
@@ -117,7 +115,6 @@ public class profile_screen extends AppCompatActivity {
                             "Foto guardada exitosamente",
                             Toast.LENGTH_SHORT).show();
 
-                    // Volver a cargar con Picasso desde la URL por si cambia de dispositivo
                     Picasso.get()
                             .load(photoUrl)
                             .placeholder(R.mipmap.ic_launcher_round)
@@ -137,9 +134,7 @@ public class profile_screen extends AppCompatActivity {
             }
 
             @Override
-            public void onProgress(double progress) {
-                // Opcional: podrías mostrar un ProgressBar si quieres
-            }
+            public void onProgress(double progress) {}
         });
     }
 
@@ -185,12 +180,20 @@ public class profile_screen extends AppCompatActivity {
     private void openCamera() {
         try {
             File photoFile = createImageFile();
+
+            Log.d("DEBUG-PATH", "photoFile: " + photoFile.getAbsolutePath());
+            Log.d("DEBUG-PATH", "photoFile exists: " + photoFile.exists());
+            Log.d("DEBUG-PATH", "photoFile canWrite: " + photoFile.canWrite());
+
             if (photoFile != null) {
                 photoUri = FileProvider.getUriForFile(
                         this,
                         getPackageName() + ".fileprovider",
                         photoFile
                 );
+
+                Log.d("DEBUG-PATH", "photoUri: " + photoUri);
+
                 takePictureLauncher.launch(photoUri);
             } else {
                 Toast.makeText(this,
@@ -206,40 +209,45 @@ public class profile_screen extends AppCompatActivity {
     }
 
     private File createImageFile() throws IOException {
+
+        // Carpeta segura en Android 10-14
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
+        if (storageDir != null && !storageDir.exists()) {
+            storageDir.mkdirs();
+        }
+
+        Log.d("DEBUG-PATH", "storageDir: " + storageDir);
+        Log.d("DEBUG-PATH", "storageDir.exists(): " + storageDir.exists());
+        Log.d("DEBUG-PATH", "storageDir.canWrite(): " + storageDir.canWrite());
+
         String imageFileName = "profile_photo_" + System.currentTimeMillis();
-        File storageDir = getExternalFilesDir(null);
-        return File.createTempFile(
+
+        File imageFile = File.createTempFile(
                 imageFileName,
                 ".jpg",
                 storageDir
         );
+
+        Log.d("DEBUG-PATH", "photoFile created: " + imageFile.getAbsolutePath());
+        Log.d("DEBUG-PATH", "photoFile exists: " + imageFile.exists());
+
+        return imageFile;
     }
 
     private void loadUserData() {
-        // Obtener datos del usuario desde SessionManager
         String userName = sessionManager.getUserName();
         String userEmail = sessionManager.getUserEmail();
         String userId = sessionManager.getUserId();
         String localPhotoUrl = sessionManager.getUserPhoto();
 
-        if (tvNombre != null) {
-            tvNombre.setText(userName);
-        }
+        tvNombre.setText(userName);
+        tvCorreo.setText(userEmail);
 
-        if (tvCorreo != null) {
-            tvCorreo.setText(userEmail);
-        }
-
-        // 1. Cargar primero desde sesión (más rápido)
         if (localPhotoUrl != null && !localPhotoUrl.isEmpty()) {
-            Picasso.get()
-                    .load(localPhotoUrl)
-                    .placeholder(R.mipmap.ic_launcher_round)
-                    .error(R.mipmap.ic_launcher_round)
-                    .into(imgPerfil);
+            Picasso.get().load(localPhotoUrl).into(imgPerfil);
         }
 
-        // 2. Refrescar desde Firebase por si hay algo más actualizado
         if (userId != null && !userId.isEmpty()) {
             loadProfilePhoto(userId);
         }
@@ -252,9 +260,7 @@ public class profile_screen extends AppCompatActivity {
                 runOnUiThread(() -> {
                     String photoUrl = user.getFotoUrl();
                     if (photoUrl != null && !photoUrl.isEmpty()) {
-                        // Actualizar también en sesión para próximas veces
                         sessionManager.saveUserPhoto(photoUrl);
-
                         Picasso.get()
                                 .load(photoUrl)
                                 .placeholder(R.mipmap.ic_launcher_round)
@@ -266,8 +272,9 @@ public class profile_screen extends AppCompatActivity {
 
             @Override
             public void onError(String errorMessage) {
-                // Mantener imagen por defecto si falla
+                // No hacer nada si falla
             }
         });
     }
+
 }

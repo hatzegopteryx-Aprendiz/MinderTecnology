@@ -52,6 +52,7 @@ dependencies {
     implementation(libs.androidx.recyclerview)
     implementation(libs.picasso)
     testImplementation(libs.junit)
+    implementation("com.squareup.picasso:picasso:2.8")
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 }
