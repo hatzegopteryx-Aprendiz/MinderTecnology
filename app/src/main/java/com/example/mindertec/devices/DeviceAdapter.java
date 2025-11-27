@@ -1,5 +1,6 @@
 package com.example.mindertec.devices;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,6 +51,13 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceView
         if (holder.tvUltimaRevision != null) {
             holder.tvUltimaRevision.setText("Última revisión: " + ultimaRevision);
         }
+        
+        // Agregar click listener a la tarjeta
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(v.getContext(), device_detail_screen.class);
+            intent.putExtra("DEVICE_ID", deviceId);
+            v.getContext().startActivity(intent);
+        });
     }
 
     @Override

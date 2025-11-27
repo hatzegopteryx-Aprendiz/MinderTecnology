@@ -13,3 +13,44 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Firebase y credenciales - CRÍTICO: NO SUBIR A GITHUB
+app/google-services.json
+**/google-services.json
+*.keystore
+*.jks
+*.p12
+*.p8
+*.pem
+*.key
+*.cert
+*.cer
+
+# Archivos de configuración sensibles
+**/secrets.properties
+**/credentials.json
+**/firebase-adminsdk-*.json
+
+# Archivos de Android Studio
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Archivos de build
+build/
+.gradle/
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Archivos temporales
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/

@@ -193,6 +193,7 @@
                                     android:tint="#6D4C41" />
 
                                 <TextView
+                                    android:id="@+id/tvTaskCount"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="8dp"
@@ -213,6 +214,28 @@
                         </com.google.android.material.card.MaterialCardView>
 
                     </LinearLayout>
+
+                    <!-- Sección de Tareas de Hoy -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="32dp"
+                        android:text="Tareas de Hoy"
+                        android:textColor="#5D4037"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:fontFamily="sans-serif-medium" />
+
+                    <ListView
+                        android:id="@+id/listTodayTasks"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:minHeight="200dp"
+                        android:maxHeight="400dp"
+                        android:divider="@android:color/transparent"
+                        android:dividerHeight="8dp"
+                        android:background="@android:color/transparent" />
 
                 </LinearLayout>
 
@@ -333,10 +356,10 @@
                 android:id="@+id/card_dispositivos"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="64dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="8dp"
+                android:minHeight="64dp"
                 app:cardBackgroundColor="#8D6E63"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="4dp"
@@ -348,12 +371,12 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:minHeight="64dp"
                     android:gravity="center_vertical"
+                    android:minHeight="64dp"
                     android:orientation="horizontal"
                     android:paddingStart="20dp"
-                    android:paddingEnd="20dp"
                     android:paddingTop="18dp"
+                    android:paddingEnd="20dp"
                     android:paddingBottom="18dp">
 
                     <ImageView
@@ -398,10 +421,10 @@
                 android:id="@+id/card_perfil"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="64dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="8dp"
+                android:minHeight="64dp"
                 app:cardBackgroundColor="#8D6E63"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="4dp"
@@ -413,12 +436,12 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:minHeight="64dp"
                     android:gravity="center_vertical"
+                    android:minHeight="64dp"
                     android:orientation="horizontal"
                     android:paddingStart="20dp"
-                    android:paddingEnd="20dp"
                     android:paddingTop="18dp"
+                    android:paddingEnd="20dp"
                     android:paddingBottom="18dp">
 
                     <ImageView
@@ -463,10 +486,10 @@
                 android:id="@+id/card_tareas"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="64dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="16dp"
+                android:minHeight="64dp"
                 app:cardBackgroundColor="#8D6E63"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="4dp"
@@ -478,12 +501,12 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:minHeight="64dp"
                     android:gravity="center_vertical"
+                    android:minHeight="64dp"
                     android:orientation="horizontal"
                     android:paddingStart="20dp"
-                    android:paddingEnd="20dp"
                     android:paddingTop="18dp"
+                    android:paddingEnd="20dp"
                     android:paddingBottom="18dp">
 
                     <ImageView

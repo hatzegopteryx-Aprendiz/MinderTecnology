@@ -15,8 +15,11 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import com.example.mindertec.R;
 import com.example.mindertec.auth.login_screen;
 import com.example.mindertec.auth.session_manager_screen;
+import com.example.mindertec.controllers.DeviceController;
+import com.example.mindertec.controllers.TaskController;
 import com.example.mindertec.devices.devices_screen;
 import com.example.mindertec.devices.task_screen;
+import com.example.mindertec.models.Task;
 import com.example.mindertec.profile.profile_screen;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
@@ -26,6 +29,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Locale;
 
 public class menu_screen extends AppCompatActivity {
 
@@ -45,7 +54,9 @@ public class menu_screen extends AppCompatActivity {
     private session_manager_screen sessionManager;
     private DatabaseReference mDatabase;
     private TextView tvDeviceCount;
+    private TextView tvTaskCount;
     private ValueEventListener deviceCountListener;
+    private TaskController taskController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,12 +67,18 @@ public class menu_screen extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference("Dispositivos");
         sessionManager = new session_manager_screen(this);
+        taskController = new TaskController(this);
+        
+        // Configurar DeviceController en TaskController para guardar historial
+        DeviceController deviceController = new DeviceController(this);
+        taskController.setDeviceController(deviceController);
 
         initializeViews();
         setupListeners();
         initializeMenuPosition();
         showDashboard();
         loadDeviceCount();
+        loadTodayTasks();
     }
 
     private void initializeViews() {
@@ -74,6 +91,7 @@ public class menu_screen extends AppCompatActivity {
         btnMenuToggle = findViewById(R.id.btn_menu_toggle);
         btnCloseMenu = findViewById(R.id.btn_close_menu);
         tvDeviceCount = findViewById(R.id.tvDeviceCount);
+        tvTaskCount = findViewById(R.id.tvTaskCount);
     }
 
     private void initializeMenuPosition() {
@@ -105,7 +123,8 @@ public class menu_screen extends AppCompatActivity {
 
         MaterialCardView cardTareas = findViewById(R.id.card_tareas);
         cardTareas.setOnClickListener(v -> {
-            showTasksSection();
+            Intent intent = new Intent(menu_screen.this, task_screen.class);
+            startActivity(intent);
             closeMenu();
         });
 
@@ -298,6 +317,114 @@ public class menu_screen extends AppCompatActivity {
         };
 
         userDevicesRef.addValueEventListener(deviceCountListener);
+    }
+
+    private void loadTodayTasks() {
+        if (mAuth.getCurrentUser() == null) {
+            if (tvTaskCount != null) {
+                tvTaskCount.setText("0");
+            }
+            return;
+        }
+
+        taskController.getTasksForUser(new TaskController.GetTasksListener() {
+            @Override
+            public void onSuccess(List<Task> tasks) {
+                // Obtener fecha de hoy en formato ISO
+                SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                Calendar today = Calendar.getInstance();
+                String todayDate = isoFormat.format(today.getTime());
+
+                // Filtrar solo tareas pendientes de hoy
+                List<Task> todayTasks = new ArrayList<>();
+                for (Task task : tasks) {
+                    // Solo incluir tareas pendientes
+                    String estado = task.getEstado() != null ? task.getEstado() : "pendiente";
+                    if (!"pendiente".equals(estado)) {
+                        continue; // Saltar tareas que no están pendientes
+                    }
+                    
+                    String fechaInicio = task.getFechaInicioIso();
+                    String fechaTermino = task.getFechaTerminoEstimadaIso();
+                    
+                    // Verificar si la fecha de inicio es hoy
+                    if (fechaInicio != null && fechaInicio.equals(todayDate)) {
+                        todayTasks.add(task);
+                    }
+                    // Verificar si la fecha de término estimada es hoy
+                    else if (fechaTermino != null && fechaTermino.equals(todayDate)) {
+                        todayTasks.add(task);
+                    }
+                    // Verificar si hoy está entre la fecha de inicio y término (tarea en curso)
+                    else if (fechaInicio != null && fechaTermino != null) {
+                        try {
+                            Calendar inicio = Calendar.getInstance();
+                            inicio.setTime(isoFormat.parse(fechaInicio));
+                            
+                            Calendar termino = Calendar.getInstance();
+                            termino.setTime(isoFormat.parse(fechaTermino));
+                            
+                            // Si hoy está entre inicio y término, incluir la tarea
+                            if (!today.before(inicio) && !today.after(termino)) {
+                                todayTasks.add(task);
+                            }
+                        } catch (Exception e) {
+                            // Si hay error al parsear fechas, ignorar esta tarea
+                        }
+                    }
+                }
+
+                // Actualizar contador
+                if (tvTaskCount != null) {
+                    tvTaskCount.setText(String.valueOf(todayTasks.size()));
+                }
+
+                // Mostrar tareas en la lista del dashboard
+                android.widget.ListView listView = dashboardContent.findViewById(R.id.listTodayTasks);
+                if (listView != null) {
+                    com.example.mindertec.devices.TaskAdapter adapter = 
+                            new com.example.mindertec.devices.TaskAdapter(todayTasks);
+                    
+                    // Configurar listener para cambiar estado de tareas
+                    adapter.setOnTaskStateChangeListener((taskId, newState) -> {
+                        taskController.updateTaskState(taskId, newState, 
+                                new TaskController.UpdateTaskStateListener() {
+                                    @Override
+                                    public void onSuccess() {
+                                        android.widget.Toast.makeText(menu_screen.this,
+                                                "Tarea marcada como completada",
+                                                android.widget.Toast.LENGTH_SHORT).show();
+                                        // Recargar tareas para actualizar la lista
+                                        loadTodayTasks();
+                                    }
+
+                                    @Override
+                                    public void onError(String errorMessage) {
+                                        android.widget.Toast.makeText(menu_screen.this,
+                                                errorMessage,
+                                                android.widget.Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                    });
+                    
+                    listView.setAdapter(adapter);
+                }
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                if (tvTaskCount != null) {
+                    tvTaskCount.setText("0");
+                }
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Recargar tareas cuando se vuelve a la pantalla
+        loadTodayTasks();
     }
 
     @Override

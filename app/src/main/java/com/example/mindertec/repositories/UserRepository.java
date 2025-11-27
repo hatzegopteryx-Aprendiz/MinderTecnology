@@ -26,8 +26,11 @@ public class UserRepository {
 
     public UserRepository(Context context) {
         this.mAuth = FirebaseAuth.getInstance();
+        // Inicializar Firebase Realtime Database
         this.mDatabase = FirebaseDatabase.getInstance().getReference();
-        this.mStorageRef = FirebaseStorage.getInstance().getReference();
+        // Inicializar Firebase Storage (usa el bucket del proyecto desde google-services.json)
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        this.mStorageRef = storage.getReference();
         this.sessionManager = new session_manager_screen(context);
     }
 
