@@ -29,9 +29,23 @@ public class UserRepository {
         // Inicializar Firebase Realtime Database
         this.mDatabase = FirebaseDatabase.getInstance().getReference();
         // Inicializar Firebase Storage (usa el bucket del proyecto desde google-services.json)
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        this.mStorageRef = storage.getReference();
-        this.sessionManager = new session_manager_screen(context);
+        try {
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            this.mStorageRef = storage.getReference();
+            this.sessionManager = new session_manager_screen(context);
+            
+            // Verificar que Storage esté correctamente inicializado
+            if (mStorageRef != null) {
+                android.util.Log.d("UserRepository", "Firebase Storage inicializado correctamente");
+                android.util.Log.d("UserRepository", "Storage Bucket: " + mStorageRef.getBucket());
+            } else {
+                android.util.Log.e("UserRepository", "Error: StorageReference es null");
+            }
+        } catch (Exception e) {
+            android.util.Log.e("UserRepository", "Error al inicializar Firebase Storage: " + e.getMessage());
+            e.printStackTrace();
+            this.mStorageRef = null;
+        }
     }
 
     public interface LoginCallback {
@@ -211,32 +225,78 @@ public class UserRepository {
     }
 
     public void uploadProfilePhoto(Uri photoUri, UploadPhotoCallback callback) {
+        // Verificar autenticación
         if (mAuth.getCurrentUser() == null) {
+            android.util.Log.e("UserRepository", "Usuario no autenticado");
             callback.onError("Usuario no autenticado");
+            return;
+        }
+
+        // Verificar que Storage esté inicializado
+        if (mStorageRef == null) {
+            android.util.Log.e("UserRepository", "StorageReference no inicializado");
+            callback.onError("Error: Storage no está configurado correctamente");
+            return;
+        }
+
+        // Verificar que el URI sea válido
+        if (photoUri == null) {
+            android.util.Log.e("UserRepository", "URI de foto es null");
+            callback.onError("Error: URI de foto inválido");
             return;
         }
 
         String userId = mAuth.getCurrentUser().getUid();
         String fileName = "profile_photos/" + userId + "_" + System.currentTimeMillis() + ".jpg";
+        
+        android.util.Log.d("UserRepository", "Iniciando subida de foto:");
+        android.util.Log.d("UserRepository", "- UserId: " + userId);
+        android.util.Log.d("UserRepository", "- FileName: " + fileName);
+        android.util.Log.d("UserRepository", "- PhotoUri: " + photoUri.toString());
+        android.util.Log.d("UserRepository", "- StorageBucket: " + mStorageRef.getBucket());
+        
         StorageReference photoRef = mStorageRef.child(fileName);
 
         UploadTask uploadTask = photoRef.putFile(photoUri);
         
         uploadTask.addOnProgressListener(taskSnapshot -> {
             double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+            android.util.Log.d("UserRepository", "Progreso de subida: " + progress + "%");
             callback.onProgress(progress);
         });
 
         uploadTask.addOnSuccessListener(taskSnapshot -> {
+            android.util.Log.d("UserRepository", "Foto subida exitosamente a Storage");
             photoRef.getDownloadUrl().addOnSuccessListener(uri -> {
                 String photoUrl = uri.toString();
+                android.util.Log.d("UserRepository", "URL de descarga obtenida: " + photoUrl);
                 // Actualizar la URL de la foto en la base de datos
                 updateUserPhotoUrl(userId, photoUrl, callback);
             }).addOnFailureListener(e -> {
+                android.util.Log.e("UserRepository", "Error al obtener URL: " + e.getMessage());
+                e.printStackTrace();
                 callback.onError("Error al obtener URL de la foto: " + e.getMessage());
             });
         }).addOnFailureListener(e -> {
-            callback.onError("Error al subir la foto: " + e.getMessage());
+            android.util.Log.e("UserRepository", "Error al subir foto: " + e.getMessage());
+            android.util.Log.e("UserRepository", "Código de error: " + e.getClass().getName());
+            e.printStackTrace();
+            
+            // Mensajes de error más específicos
+            String errorMessage = e.getMessage();
+            if (errorMessage != null) {
+                if (errorMessage.contains("permission") || errorMessage.contains("Permission")) {
+                    callback.onError("Error: No tienes permiso para subir archivos. Verifica las reglas de Firebase Storage.");
+                } else if (errorMessage.contains("network") || errorMessage.contains("Network")) {
+                    callback.onError("Error de conexión. Verifica tu internet.");
+                } else if (errorMessage.contains("unauthorized") || errorMessage.contains("Unauthorized")) {
+                    callback.onError("Error: No autorizado. Verifica que estés autenticado y las reglas de Storage.");
+                } else {
+                    callback.onError("Error al subir la foto: " + errorMessage);
+                }
+            } else {
+                callback.onError("Error desconocido al subir la foto");
+            }
         });
     }
 

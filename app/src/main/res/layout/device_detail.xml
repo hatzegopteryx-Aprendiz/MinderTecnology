@@ -347,11 +347,11 @@
                     android:id="@+id/listCompletedTasks"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:minHeight="100dp"
-                    android:maxHeight="300dp"
+                    android:nestedScrollingEnabled="true"
                     android:divider="@android:color/transparent"
                     android:dividerHeight="8dp"
-                    android:background="@android:color/transparent" />
+                    android:background="@android:color/transparent"
+                    android:descendantFocusability="blocksDescendants" />
 
             </LinearLayout>
 

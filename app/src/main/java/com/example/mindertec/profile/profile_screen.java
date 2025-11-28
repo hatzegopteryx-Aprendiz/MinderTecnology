@@ -9,7 +9,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -29,7 +28,6 @@ import com.example.mindertec.menu.menu_screen;
 import com.example.mindertec.repositories.UserRepository;
 import com.google.android.material.button.MaterialButton;
 import com.squareup.picasso.Picasso;
-
 
 import java.io.File;
 import java.io.IOException;
@@ -101,12 +99,21 @@ public class profile_screen extends AppCompatActivity {
     }
 
     private void uploadPhotoToFirebase(Uri photoUri) {
+        android.util.Log.d("ProfileScreen", "Iniciando subida de foto a Firebase");
         Toast.makeText(this, "Subiendo foto...", Toast.LENGTH_SHORT).show();
         btnCamera.setEnabled(false);
+
+        if (photoUri == null) {
+            android.util.Log.e("ProfileScreen", "Error: photoUri es null");
+            Toast.makeText(this, "Error: No se pudo obtener la foto", Toast.LENGTH_SHORT).show();
+            btnCamera.setEnabled(true);
+            return;
+        }
 
         userRepository.uploadProfilePhoto(photoUri, new UserRepository.UploadPhotoCallback() {
             @Override
             public void onSuccess(String photoUrl) {
+                android.util.Log.d("ProfileScreen", "Foto subida exitosamente. URL: " + photoUrl);
                 runOnUiThread(() -> {
                     sessionManager.saveUserPhoto(photoUrl);
 
@@ -125,16 +132,19 @@ public class profile_screen extends AppCompatActivity {
 
             @Override
             public void onError(String errorMessage) {
+                android.util.Log.e("ProfileScreen", "Error al subir foto: " + errorMessage);
                 runOnUiThread(() -> {
                     btnCamera.setEnabled(true);
                     Toast.makeText(profile_screen.this,
                             "Error: " + errorMessage,
-                            Toast.LENGTH_SHORT).show();
+                            Toast.LENGTH_LONG).show();
                 });
             }
 
             @Override
-            public void onProgress(double progress) {}
+            public void onProgress(double progress) {
+                android.util.Log.d("ProfileScreen", "Progreso: " + progress + "%");
+            }
         });
     }
 
@@ -178,12 +188,16 @@ public class profile_screen extends AppCompatActivity {
     }
 
     private void openCamera() {
+        // Verificar si el dispositivo tiene cámara
+        if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
+            Toast.makeText(this,
+                    "Este dispositivo no tiene cámara",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         try {
             File photoFile = createImageFile();
-
-            Log.d("DEBUG-PATH", "photoFile: " + photoFile.getAbsolutePath());
-            Log.d("DEBUG-PATH", "photoFile exists: " + photoFile.exists());
-            Log.d("DEBUG-PATH", "photoFile canWrite: " + photoFile.canWrite());
 
             if (photoFile != null) {
                 photoUri = FileProvider.getUriForFile(
@@ -191,8 +205,6 @@ public class profile_screen extends AppCompatActivity {
                         getPackageName() + ".fileprovider",
                         photoFile
                 );
-
-                Log.d("DEBUG-PATH", "photoUri: " + photoUri);
 
                 takePictureLauncher.launch(photoUri);
             } else {
@@ -203,34 +215,25 @@ public class profile_screen extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
             Toast.makeText(this,
-                    "Error al abrir la cámara",
+                    "Error al abrir la cámara: " + e.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
     }
 
     private File createImageFile() throws IOException {
-
-        // Carpeta segura en Android 10-14
+        // Carpeta segura en Android 10+ (no requiere permisos de almacenamiento)
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
         if (storageDir != null && !storageDir.exists()) {
             storageDir.mkdirs();
         }
 
-        Log.d("DEBUG-PATH", "storageDir: " + storageDir);
-        Log.d("DEBUG-PATH", "storageDir.exists(): " + storageDir.exists());
-        Log.d("DEBUG-PATH", "storageDir.canWrite(): " + storageDir.canWrite());
+        if (storageDir == null) {
+            throw new IOException("No se pudo acceder al directorio de imágenes");
+        }
 
-        String imageFileName = "profile_photo_" + System.currentTimeMillis();
-
-        File imageFile = File.createTempFile(
-                imageFileName,
-                ".jpg",
-                storageDir
-        );
-
-        Log.d("DEBUG-PATH", "photoFile created: " + imageFile.getAbsolutePath());
-        Log.d("DEBUG-PATH", "photoFile exists: " + imageFile.exists());
+        String imageFileName = "profile_photo_" + System.currentTimeMillis() + ".jpg";
+        File imageFile = new File(storageDir, imageFileName);
 
         return imageFile;
     }

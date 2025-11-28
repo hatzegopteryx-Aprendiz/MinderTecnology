@@ -5,6 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="4dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground"
     app:cardCornerRadius="8dp"
     app:cardElevation="2dp">
 
@@ -13,7 +16,10 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="12dp"
-        android:background="#F5F5F5">
+        android:background="#F5F5F5"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackground">
 
         <!-- Tarea -->
         <TextView
@@ -53,6 +59,18 @@
                 android:gravity="end" />
 
         </LinearLayout>
+
+        <!-- Ubicación -->
+        <TextView
+            android:id="@+id/tvUbicacion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Ubicación: Dirección"
+            android:textColor="#8D6E63"
+            android:textSize="12sp"
+            android:maxLines="2"
+            android:ellipsize="end" />
 
     </LinearLayout>
 

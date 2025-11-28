@@ -102,6 +102,23 @@ public class device_detail_screen extends AppCompatActivity {
         
         if (listCompletedTasks != null) {
             listCompletedTasks.setAdapter(completedTaskAdapter);
+            
+            // Configurar click listener directamente en el ListView
+            listCompletedTasks.setOnItemClickListener((parent, view, position, id) -> {
+                try {
+                    CompletedTask completedTask = (CompletedTask) completedTaskAdapter.getItem(position);
+                    if (completedTask != null) {
+                        android.util.Log.d("device_detail", "Click en tarea: " + completedTask.getTarea());
+                        showCompletedTaskDetailDialog(completedTask);
+                    } else {
+                        android.util.Log.d("device_detail", "CompletedTask es null en posición: " + position);
+                        Toast.makeText(device_detail_screen.this, "Error: No se pudo obtener la información de la tarea", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (Exception e) {
+                    android.util.Log.e("device_detail", "Error al hacer click en tarea: " + e.getMessage());
+                    Toast.makeText(device_detail_screen.this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 
@@ -381,6 +398,54 @@ public class device_detail_screen extends AppCompatActivity {
         };
 
         completedTasksRef.addValueEventListener(completedTasksListener);
+    }
+
+    private void showCompletedTaskDetailDialog(CompletedTask completedTask) {
+        if (completedTask == null) {
+            Toast.makeText(this, "Error: Información de tarea no disponible", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
+        final android.app.Dialog dialog = new android.app.Dialog(this);
+        dialog.requestWindowFeature(android.view.Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_detalle_tarea_completada);
+        dialog.setCancelable(true);
+
+        // Configurar ventana del diálogo
+        android.view.Window window = dialog.getWindow();
+        if (window != null) {
+            window.setLayout(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
+            window.setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
+            window.setGravity(android.view.Gravity.CENTER);
+        }
+
+        android.widget.TextView tvDescripcion = dialog.findViewById(R.id.tvDescripcionCompleta);
+        android.widget.TextView tvFecha = dialog.findViewById(R.id.tvFechaCompleta);
+        android.widget.TextView tvUbicacion = dialog.findViewById(R.id.tvUbicacionCompleta);
+        android.widget.TextView tvPersonal = dialog.findViewById(R.id.tvPersonalCompleto);
+        com.google.android.material.button.MaterialButton btnCerrar = dialog.findViewById(R.id.btnCerrar);
+
+        if (tvDescripcion != null) {
+            tvDescripcion.setText(completedTask.getTarea() != null ? completedTask.getTarea() : "Sin descripción");
+        }
+
+        if (tvFecha != null) {
+            tvFecha.setText(completedTask.getFecha() != null ? completedTask.getFecha() : "Sin fecha");
+        }
+
+        if (tvUbicacion != null) {
+            tvUbicacion.setText(completedTask.getUbicacion() != null ? completedTask.getUbicacion() : "Ubicación no disponible");
+        }
+
+        if (tvPersonal != null) {
+            tvPersonal.setText(completedTask.getPersonal() != null ? completedTask.getPersonal() : "Sin información");
+        }
+
+        if (btnCerrar != null) {
+            btnCerrar.setOnClickListener(v -> dialog.dismiss());
+        }
+
+        dialog.show();
     }
 
     @Override

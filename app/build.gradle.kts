@@ -53,6 +53,9 @@ dependencies {
     implementation(libs.picasso)
     testImplementation(libs.junit)
     implementation("com.squareup.picasso:picasso:2.8")
+    
+    // Google Play Services Location
+    implementation("com.google.android.gms:play-services-location:21.0.1")
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 }

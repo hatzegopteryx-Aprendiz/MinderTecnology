@@ -14,6 +14,7 @@ import com.example.mindertec.R;
 import com.example.mindertec.controllers.TaskController;
 import com.example.mindertec.menu.menu_screen;
 import com.example.mindertec.models.Task;
+import com.example.mindertec.utils.LocationHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +41,7 @@ public class task_screen extends AppCompatActivity {
         taskController.setDeviceController(deviceController);
         
         taskList = new ArrayList<>();
-        taskAdapter = new TaskAdapter(taskList);
+        taskAdapter = new TaskAdapter(this, taskList);
 
         // Inicializar vistas
         listActividades = findViewById(R.id.listActividades);
@@ -69,25 +70,75 @@ public class task_screen extends AppCompatActivity {
                 taskAdapter.updateTasks(taskList);
 
                 // Configurar listener para cambiar estado de tareas
-                taskAdapter.setOnTaskStateChangeListener((taskId, newState) -> {
-                    taskController.updateTaskState(taskId, newState, 
-                            new TaskController.UpdateTaskStateListener() {
-                                @Override
-                                public void onSuccess() {
-                                    Toast.makeText(task_screen.this,
-                                            "Tarea marcada como completada",
-                                            Toast.LENGTH_SHORT).show();
-                                    // Recargar tareas para actualizar la lista
-                                    loadTasks();
-                                }
+                taskAdapter.setOnTaskStateChangeListener((taskId, newState, descripcionRealizada) -> {
+                    if ("completada".equals(newState)) {
+                        // Obtener ubicación antes de completar la tarea
+                        LocationHelper locationHelper = new LocationHelper(task_screen.this);
+                        locationHelper.getCurrentLocation(new LocationHelper.LocationCallbackListener() {
+                            @Override
+                            public void onLocationReceived(String locationString, double latitude, double longitude) {
+                                // Completar tarea con ubicación y descripción realizada
+                                taskController.updateTaskStateWithLocation(taskId, newState, descripcionRealizada, locationString,
+                                        new TaskController.UpdateTaskStateWithLocationListener() {
+                                            @Override
+                                            public void onSuccess() {
+                                                Toast.makeText(task_screen.this,
+                                                        "Tarea marcada como completada",
+                                                        Toast.LENGTH_SHORT).show();
+                                                loadTasks();
+                                                locationHelper.cleanup();
+                                            }
 
-                                @Override
-                                public void onError(String errorMessage) {
-                                    Toast.makeText(task_screen.this,
-                                            errorMessage,
-                                            Toast.LENGTH_SHORT).show();
-                                }
-                            });
+                                            @Override
+                                            public void onError(String errorMessage) {
+                                                Toast.makeText(task_screen.this,
+                                                        errorMessage,
+                                                        Toast.LENGTH_SHORT).show();
+                                                locationHelper.cleanup();
+                                            }
+                                        });
+                            }
+
+                            @Override
+                            public void onLocationError(String errorMessage) {
+                                // Completar tarea sin ubicación si falla
+                                Toast.makeText(task_screen.this,
+                                        "Tarea completada, pero no se pudo obtener ubicación: " + errorMessage,
+                                        Toast.LENGTH_LONG).show();
+                                taskController.updateTaskStateWithLocation(taskId, newState, descripcionRealizada, null,
+                                        new TaskController.UpdateTaskStateWithLocationListener() {
+                                            @Override
+                                            public void onSuccess() {
+                                                loadTasks();
+                                            }
+
+                                            @Override
+                                            public void onError(String errorMsg) {
+                                                Toast.makeText(task_screen.this,
+                                                        errorMsg,
+                                                        Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                                locationHelper.cleanup();
+                            }
+                        });
+                    } else {
+                        // Para otros estados, usar el método normal sin ubicación
+                        taskController.updateTaskState(taskId, newState, 
+                                new TaskController.UpdateTaskStateListener() {
+                                    @Override
+                                    public void onSuccess() {
+                                        loadTasks();
+                                    }
+
+                                    @Override
+                                    public void onError(String errorMessage) {
+                                        Toast.makeText(task_screen.this,
+                                                errorMessage,
+                                                Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                    }
                 });
 
                 if (tvActividades != null) {

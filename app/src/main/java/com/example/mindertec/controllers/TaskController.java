@@ -34,6 +34,11 @@ public class TaskController {
         void onError(String errorMessage);
     }
 
+    public interface UpdateTaskStateWithLocationListener {
+        void onSuccess();
+        void onError(String errorMessage);
+    }
+
     private DeviceController deviceController;
 
     public void setDeviceController(DeviceController deviceController) {
@@ -127,8 +132,8 @@ public class TaskController {
                         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
                         String fechaCompletada = dateFormat.format(Calendar.getInstance().getTime());
                         
-                        // Guardar en el historial del dispositivo
-                        deviceController.addCompletedTask(deviceId, descripcion, fechaCompletada, tecnicoNombre,
+                        // Guardar en el historial del dispositivo (sin ubicación por ahora)
+                        deviceController.addCompletedTask(deviceId, descripcion, fechaCompletada, tecnicoNombre, "Ubicación no disponible",
                                 new DeviceController.AddCompletedTaskListener() {
                                     @Override
                                     public void onSuccess() {
@@ -139,6 +144,71 @@ public class TaskController {
                                     public void onError(String errorMessage) {
                                         // Aunque falle guardar en el historial, la tarea ya se completó
                                         // Por lo tanto, consideramos éxito
+                                        listener.onSuccess();
+                                    }
+                                });
+                    } else {
+                        listener.onSuccess();
+                    }
+                } else {
+                    listener.onSuccess();
+                }
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                listener.onError(errorMessage);
+            }
+        });
+    }
+
+    public void updateTaskStateWithLocation(String taskId, String newState, String descripcionRealizada, String ubicacion, UpdateTaskStateWithLocationListener listener) {
+        if (taskId == null || taskId.trim().isEmpty()) {
+            listener.onError("ID de tarea no válido");
+            return;
+        }
+
+        if (newState == null || newState.trim().isEmpty()) {
+            listener.onError("Estado no válido");
+            return;
+        }
+
+        // Validar que el estado sea uno de los permitidos
+        if (!"pendiente".equals(newState) && !"en_proceso".equals(newState) && !"completada".equals(newState)) {
+            listener.onError("Estado no válido. Debe ser: pendiente, en_proceso o completada");
+            return;
+        }
+
+        taskRepository.updateTaskState(taskId, newState, new TaskRepository.UpdateTaskStateCallback() {
+            @Override
+            public void onSuccess(Task task) {
+                // Si la tarea se completó, guardarla en el historial del dispositivo con ubicación
+                if ("completada".equals(newState) && deviceController != null && task != null) {
+                    String deviceId = task.getDeviceId();
+                    // Usar la descripción realizada si está disponible, sino la original
+                    String descripcionFinal = (descripcionRealizada != null && !descripcionRealizada.trim().isEmpty()) 
+                            ? descripcionRealizada : task.getDescripcion();
+                    String tecnicoNombre = task.getTecnicoNombre();
+                    
+                    if (deviceId != null && descripcionFinal != null && tecnicoNombre != null) {
+                        // Obtener fecha actual
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                        String fechaCompletada = dateFormat.format(Calendar.getInstance().getTime());
+                        
+                        // Usar ubicación proporcionada o "Ubicación no disponible"
+                        String finalUbicacion = (ubicacion != null && !ubicacion.trim().isEmpty()) ? ubicacion : "Ubicación no disponible";
+                        
+                        // Guardar en el historial del dispositivo con ubicación y descripción realizada
+                        deviceController.addCompletedTask(deviceId, descripcionFinal, fechaCompletada, tecnicoNombre, finalUbicacion,
+                                new DeviceController.AddCompletedTaskListener() {
+                                    @Override
+                                    public void onSuccess() {
+                                        listener.onSuccess();
+                                    }
+
+                                    @Override
+                                    public void onError(String errorMessage) {
+                                        // Aunque falle guardar en el historial, la tarea ya se completó
                                         listener.onSuccess();
                                     }
                                 });

@@ -15,12 +15,19 @@ import java.util.List;
 public class TaskAdapter extends BaseAdapter {
     private List<Task> taskList;
     private OnTaskStateChangeListener listener;
+    private android.content.Context context;
+    private java.util.Set<String> processingTasks = new java.util.HashSet<>(); // Para evitar duplicados
 
     public interface OnTaskStateChangeListener {
-        void onTaskStateChanged(String taskId, String newState);
+        void onTaskStateChanged(String taskId, String newState, String descripcionRealizada);
     }
 
     public TaskAdapter(List<Task> taskList) {
+        this.taskList = taskList;
+    }
+
+    public TaskAdapter(android.content.Context context, List<Task> taskList) {
+        this.context = context;
         this.taskList = taskList;
     }
 
@@ -48,6 +55,11 @@ public class TaskAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_task, parent, false);
+        }
+        
+        // Guardar contexto si no está establecido
+        if (context == null) {
+            context = parent.getContext();
         }
 
         Task task = taskList.get(position);
@@ -112,10 +124,29 @@ public class TaskAdapter extends BaseAdapter {
             // Mostrar botón solo si la tarea está pendiente o en proceso
             if (("pendiente".equals(estado) || "en_proceso".equals(estado)) && taskId != null) {
                 btnTerminar.setVisibility(View.VISIBLE);
+                
+                // Deshabilitar si ya está siendo procesada
+                boolean isProcessing = processingTasks.contains(taskId);
+                btnTerminar.setEnabled(!isProcessing);
+                if (isProcessing) {
+                    btnTerminar.setText("Procesando...");
+                } else {
+                    btnTerminar.setText("Terminar");
+                }
+                
                 btnTerminar.setOnClickListener(v -> {
-                    if (listener != null) {
-                        listener.onTaskStateChanged(taskId, "completada");
+                    // Prevenir múltiples clics
+                    if (processingTasks.contains(taskId)) {
+                        return; // Ya está siendo procesada
                     }
+                    
+                    // Marcar como procesando inmediatamente
+                    processingTasks.add(taskId);
+                    btnTerminar.setEnabled(false);
+                    btnTerminar.setText("Procesando...");
+                    
+                    // Mostrar diálogo para ingresar descripción
+                    showCompleteTaskDialog(parent.getContext(), taskId, task, btnTerminar);
                 });
             } else {
                 btnTerminar.setVisibility(View.GONE);
@@ -127,7 +158,62 @@ public class TaskAdapter extends BaseAdapter {
 
     public void updateTasks(List<Task> newTaskList) {
         this.taskList = newTaskList;
+        // Limpiar tareas completadas del set de procesamiento
+        processingTasks.clear();
         notifyDataSetChanged();
+    }
+
+    private void showCompleteTaskDialog(android.content.Context context, String taskId, Task task, MaterialButton btnTerminar) {
+        android.app.Dialog dialog = new android.app.Dialog(context);
+        dialog.requestWindowFeature(android.view.Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_completar_tarea);
+        dialog.setCancelable(true);
+
+        // Configurar ventana del diálogo
+        android.view.Window window = dialog.getWindow();
+        if (window != null) {
+            window.setLayout(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
+            window.setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
+            window.setGravity(android.view.Gravity.CENTER);
+        }
+
+        com.google.android.material.textfield.TextInputEditText etDescripcion = dialog.findViewById(R.id.etDescripcionRealizada);
+        com.google.android.material.button.MaterialButton btnCancelar = dialog.findViewById(R.id.btnCancelar);
+        com.google.android.material.button.MaterialButton btnConfirmar = dialog.findViewById(R.id.btnConfirmar);
+
+        if (btnCancelar != null) {
+            btnCancelar.setOnClickListener(v -> {
+                // Restaurar botón si se cancela
+                processingTasks.remove(taskId);
+                dialog.dismiss();
+                notifyDataSetChanged(); // Refrescar para restaurar el botón
+            });
+        }
+
+        if (btnConfirmar != null) {
+            btnConfirmar.setOnClickListener(v -> {
+                String descripcionRealizada = etDescripcion != null ? etDescripcion.getText().toString().trim() : "";
+                
+                if (descripcionRealizada.isEmpty()) {
+                    android.widget.Toast.makeText(context, "Por favor, ingrese una descripción de la tarea realizada", 
+                            android.widget.Toast.LENGTH_SHORT).show();
+                    if (etDescripcion != null) {
+                        etDescripcion.requestFocus();
+                    }
+                    return;
+                }
+
+                // Cerrar diálogo
+                dialog.dismiss();
+
+                // Llamar al listener con la descripción
+                if (listener != null) {
+                    listener.onTaskStateChanged(taskId, "completada", descripcionRealizada);
+                }
+            });
+        }
+
+        dialog.show();
     }
 }
 

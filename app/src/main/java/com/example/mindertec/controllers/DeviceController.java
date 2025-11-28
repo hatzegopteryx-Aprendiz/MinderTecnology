@@ -150,7 +150,7 @@ public class DeviceController {
                 });
     }
 
-    public void addCompletedTask(String deviceId, String tarea, String fecha, String personal,
+    public void addCompletedTask(String deviceId, String tarea, String fecha, String personal, String ubicacion,
                                  AddCompletedTaskListener listener) {
         if (deviceId == null || deviceId.trim().isEmpty()) {
             listener.onError("ID de dispositivo no válido");
@@ -172,7 +172,10 @@ public class DeviceController {
             return;
         }
 
-        CompletedTask completedTask = new CompletedTask(tarea, fecha, personal);
+        // Ubicación puede ser null o vacía (si no se pudo obtener)
+        String finalUbicacion = (ubicacion != null && !ubicacion.trim().isEmpty()) ? ubicacion : "Ubicación no disponible";
+
+        CompletedTask completedTask = new CompletedTask(tarea, fecha, personal, finalUbicacion);
 
         deviceRepository.addCompletedTask(deviceId, completedTask, 
                 new DeviceRepository.AddCompletedTaskCallback() {

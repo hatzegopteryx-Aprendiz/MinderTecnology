@@ -2,4 +2,37 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    
+    <!-- Paleta de colores clara (modo claro) -->
+    <color name="background_light">#D7CCC8</color>
+    <color name="card_background_light">#FFFFFF</color>
+    <color name="card_background_secondary_light">#F5F5F5</color>
+    <color name="text_primary_light">#5D4037</color>
+    <color name="text_secondary_light">#8D6E63</color>
+    <color name="text_tertiary_light">#6D4C41</color>
+    <color name="button_primary_light">#6D4C41</color>
+    <color name="button_success_light">#4CAF50</color>
+    <color name="divider_light">#E0E0E0</color>
+    
+    <!-- Paleta de colores oscura (modo oscuro - invertida) -->
+    <color name="background_dark">#3E2723</color>
+    <color name="card_background_dark">#4E342E</color>
+    <color name="card_background_secondary_dark">#5D4037</color>
+    <color name="text_primary_dark">#D7CCC8</color>
+    <color name="text_secondary_dark">#BCAAA4</color>
+    <color name="text_tertiary_dark">#A1887F</color>
+    <color name="button_primary_dark">#8D6E63</color>
+    <color name="button_success_dark">#66BB6A</color>
+    <color name="divider_dark">#5D4037</color>
+    
+    <!-- Colores dinámicos (se asignan según el modo) -->
+    <color name="background">@color/background_light</color>
+    <color name="card_background">@color/card_background_light</color>
+    <color name="card_background_secondary">@color/card_background_secondary_light</color>
+    <color name="text_primary">@color/text_primary_light</color>
+    <color name="text_secondary">@color/text_secondary_light</color>
+    <color name="text_tertiary">@color/text_tertiary_light</color>
+    <color name="button_primary">@color/button_primary_light</color>
+    <color name="button_success">@color/button_success_light</color>
+    <color name="divider">@color/divider_light</color>
 </resources>

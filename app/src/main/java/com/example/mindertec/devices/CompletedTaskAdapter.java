@@ -13,9 +13,18 @@ import java.util.List;
 
 public class CompletedTaskAdapter extends BaseAdapter {
     private List<CompletedTask> completedTaskList;
+    private OnCompletedTaskClickListener listener;
+
+    public interface OnCompletedTaskClickListener {
+        void onCompletedTaskClick(CompletedTask completedTask);
+    }
 
     public CompletedTaskAdapter(List<CompletedTask> completedTaskList) {
         this.completedTaskList = completedTaskList;
+    }
+
+    public void setOnCompletedTaskClickListener(OnCompletedTaskClickListener listener) {
+        this.listener = listener;
     }
 
     @Override
@@ -45,6 +54,7 @@ public class CompletedTaskAdapter extends BaseAdapter {
         TextView tvTarea = convertView.findViewById(R.id.tvTarea);
         TextView tvFecha = convertView.findViewById(R.id.tvFecha);
         TextView tvPersonal = convertView.findViewById(R.id.tvPersonal);
+        TextView tvUbicacion = convertView.findViewById(R.id.tvUbicacion);
 
         if (tvTarea != null) {
             tvTarea.setText(completedTask.getTarea() != null ? completedTask.getTarea() : "Sin descripción");
@@ -58,6 +68,11 @@ public class CompletedTaskAdapter extends BaseAdapter {
         if (tvPersonal != null) {
             String personal = completedTask.getPersonal() != null ? completedTask.getPersonal() : "Sin información";
             tvPersonal.setText("Personal: " + personal);
+        }
+
+        if (tvUbicacion != null) {
+            String ubicacion = completedTask.getUbicacion() != null ? completedTask.getUbicacion() : "Ubicación no disponible";
+            tvUbicacion.setText("Ubicación: " + ubicacion);
         }
 
         return convertView;

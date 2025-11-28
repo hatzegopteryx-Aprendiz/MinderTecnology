@@ -21,6 +21,9 @@ import com.example.mindertec.devices.devices_screen;
 import com.example.mindertec.devices.task_screen;
 import com.example.mindertec.models.Task;
 import com.example.mindertec.profile.profile_screen;
+import com.example.mindertec.utils.LocationHelper;
+import com.example.mindertec.utils.LightSensorHelper;
+import com.example.mindertec.utils.ThemeHelper;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -57,17 +60,43 @@ public class menu_screen extends AppCompatActivity {
     private TextView tvTaskCount;
     private ValueEventListener deviceCountListener;
     private TaskController taskController;
+    private LightSensorHelper lightSensorHelper;
+    private View rootView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.menu);
-
-        // Inicializar Firebase
+        
+        // Inicializar Firebase y SessionManager primero para verificar sesión
         mAuth = FirebaseAuth.getInstance();
-        mDatabase = FirebaseDatabase.getInstance().getReference("Dispositivos");
         sessionManager = new session_manager_screen(this);
+        
+        // Verificar si hay sesión activa antes de mostrar la pantalla
+        if (!sessionManager.isLoggedIn() || mAuth.getCurrentUser() == null) {
+            // Si no hay sesión, redirigir al login y limpiar el stack
+            Intent loginIntent = new Intent(this, login_screen.class);
+            loginIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(loginIntent);
+            finish();
+            return;
+        }
+        
+        setContentView(R.layout.menu);
+        
+        rootView = findViewById(android.R.id.content);
+
+        // Continuar con la inicialización
+        mDatabase = FirebaseDatabase.getInstance().getReference("Dispositivos");
         taskController = new TaskController(this);
+        
+        // Inicializar sensor de luz
+        initializeLightSensor();
+        
+        // Aplicar tema inicial basado en la luz actual
+        if (lightSensorHelper != null && lightSensorHelper.isSensorAvailable()) {
+            // Aplicar tema inicial (se actualizará cuando el sensor detecte cambios)
+            ThemeHelper.applyTheme(rootView, false); // Iniciar con modo claro por defecto
+        }
         
         // Configurar DeviceController en TaskController para guardar historial
         DeviceController deviceController = new DeviceController(this);
@@ -130,17 +159,40 @@ public class menu_screen extends AppCompatActivity {
 
         MaterialButton btnVolver = findViewById(R.id.btn_VolverMenu);
         btnVolver.setOnClickListener(v -> {
-            // Cerrar sesión y limpiar datos
-            sessionManager.logout();
+            // Cerrar sesión de Firebase primero
             mAuth.signOut();
-            startActivity(new Intent(this, login_screen.class));
-            finish();
+            // Limpiar datos locales
+            sessionManager.logout();
+            
+            // Limpiar el stack de actividades y redirigir al login
+            Intent loginIntent = new Intent(this, login_screen.class);
+            loginIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(loginIntent);
+            finishAffinity(); // Cierra todas las actividades del stack
         });
+
+        // Configurar listeners para las cards del dashboard
+        MaterialCardView cardDashboardDispositivos = dashboardContent.findViewById(R.id.card_dashboard_dispositivos);
+        if (cardDashboardDispositivos != null) {
+            cardDashboardDispositivos.setOnClickListener(v -> {
+                Intent intent = new Intent(menu_screen.this, devices_screen.class);
+                startActivity(intent);
+            });
+        }
+
+        MaterialCardView cardDashboardTareas = dashboardContent.findViewById(R.id.card_dashboard_tareas);
+        if (cardDashboardTareas != null) {
+            cardDashboardTareas.setOnClickListener(v -> {
+                Intent intent = new Intent(menu_screen.this, task_screen.class);
+                startActivity(intent);
+            });
+        }
     }
+
 
     private void showDashboard() {
         currentSection = "dashboard";
-        sectionTitle.setText("Dashboard");
+        sectionTitle.setText("MinderTec");
         sectionSubtitle.setText("Panel principal de control");
 
         // Mostrar contenido del dashboard
@@ -383,28 +435,78 @@ public class menu_screen extends AppCompatActivity {
                 android.widget.ListView listView = dashboardContent.findViewById(R.id.listTodayTasks);
                 if (listView != null) {
                     com.example.mindertec.devices.TaskAdapter adapter = 
-                            new com.example.mindertec.devices.TaskAdapter(todayTasks);
+                            new com.example.mindertec.devices.TaskAdapter(menu_screen.this, todayTasks);
                     
                     // Configurar listener para cambiar estado de tareas
-                    adapter.setOnTaskStateChangeListener((taskId, newState) -> {
-                        taskController.updateTaskState(taskId, newState, 
-                                new TaskController.UpdateTaskStateListener() {
-                                    @Override
-                                    public void onSuccess() {
-                                        android.widget.Toast.makeText(menu_screen.this,
-                                                "Tarea marcada como completada",
-                                                android.widget.Toast.LENGTH_SHORT).show();
-                                        // Recargar tareas para actualizar la lista
-                                        loadTodayTasks();
-                                    }
+                    adapter.setOnTaskStateChangeListener((taskId, newState, descripcionRealizada) -> {
+                        if ("completada".equals(newState)) {
+                            // Obtener ubicación antes de completar la tarea
+                            LocationHelper locationHelper = new LocationHelper(menu_screen.this);
+                            locationHelper.getCurrentLocation(new LocationHelper.LocationCallbackListener() {
+                                @Override
+                                public void onLocationReceived(String locationString, double latitude, double longitude) {
+                                    // Completar tarea con ubicación y descripción realizada
+                                    taskController.updateTaskStateWithLocation(taskId, newState, descripcionRealizada, locationString,
+                                            new TaskController.UpdateTaskStateWithLocationListener() {
+                                                @Override
+                                                public void onSuccess() {
+                                                    android.widget.Toast.makeText(menu_screen.this,
+                                                            "Tarea marcada como completada",
+                                                            android.widget.Toast.LENGTH_SHORT).show();
+                                                    loadTodayTasks();
+                                                    locationHelper.cleanup();
+                                                }
 
-                                    @Override
-                                    public void onError(String errorMessage) {
-                                        android.widget.Toast.makeText(menu_screen.this,
-                                                errorMessage,
-                                                android.widget.Toast.LENGTH_SHORT).show();
-                                    }
-                                });
+                                                @Override
+                                                public void onError(String errorMessage) {
+                                                    android.widget.Toast.makeText(menu_screen.this,
+                                                            errorMessage,
+                                                            android.widget.Toast.LENGTH_SHORT).show();
+                                                    locationHelper.cleanup();
+                                                }
+                                            });
+                                }
+
+                                @Override
+                                public void onLocationError(String errorMessage) {
+                                    // Completar tarea sin ubicación si falla
+                                    android.widget.Toast.makeText(menu_screen.this,
+                                            "Tarea completada, pero no se pudo obtener ubicación: " + errorMessage,
+                                            android.widget.Toast.LENGTH_LONG).show();
+                                    taskController.updateTaskStateWithLocation(taskId, newState, descripcionRealizada, null,
+                                            new TaskController.UpdateTaskStateWithLocationListener() {
+                                                @Override
+                                                public void onSuccess() {
+                                                    loadTodayTasks();
+                                                }
+
+                                                @Override
+                                                public void onError(String errorMsg) {
+                                                    android.widget.Toast.makeText(menu_screen.this,
+                                                            errorMsg,
+                                                            android.widget.Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+                                    locationHelper.cleanup();
+                                }
+                            });
+                        } else {
+                            // Para otros estados, usar el método normal sin ubicación
+                            taskController.updateTaskState(taskId, newState, 
+                                    new TaskController.UpdateTaskStateListener() {
+                                        @Override
+                                        public void onSuccess() {
+                                            loadTodayTasks();
+                                        }
+
+                                        @Override
+                                        public void onError(String errorMessage) {
+                                            android.widget.Toast.makeText(menu_screen.this,
+                                                    errorMessage,
+                                                    android.widget.Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                        }
                     });
                     
                     listView.setAdapter(adapter);
@@ -421,10 +523,65 @@ public class menu_screen extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        // Si se presiona el botón atrás, verificar sesión antes de permitir salir
+        if (!sessionManager.isLoggedIn() || mAuth.getCurrentUser() == null) {
+            // Si no hay sesión, redirigir al login
+            Intent loginIntent = new Intent(this, login_screen.class);
+            loginIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(loginIntent);
+            finish();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    private void initializeLightSensor() {
+        lightSensorHelper = new LightSensorHelper(this);
+        
+        if (lightSensorHelper.isSensorAvailable()) {
+            lightSensorHelper.setLightChangeListener(isDarkMode -> {
+                runOnUiThread(() -> {
+                    // Aplicar tema según la luz
+                    if (rootView != null) {
+                        ThemeHelper.applyTheme(rootView, isDarkMode);
+                    }
+                });
+            });
+            lightSensorHelper.startListening();
+        }
+    }
+    
+    @Override
     protected void onResume() {
         super.onResume();
-        // Recargar tareas cuando se vuelve a la pantalla
+        
+        // Verificar sesión cada vez que se resume la actividad
+        if (!sessionManager.isLoggedIn() || mAuth.getCurrentUser() == null) {
+            // Si no hay sesión, redirigir al login
+            Intent loginIntent = new Intent(this, login_screen.class);
+            loginIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(loginIntent);
+            finish();
+            return;
+        }
+        
         loadTodayTasks();
+        loadProfilePhoto();
+        
+        // Reiniciar sensor de luz si está disponible
+        if (lightSensorHelper != null && lightSensorHelper.isSensorAvailable()) {
+            lightSensorHelper.startListening();
+        }
+    }
+    
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Detener sensor de luz para ahorrar batería
+        if (lightSensorHelper != null) {
+            lightSensorHelper.stopListening();
+        }
     }
 
     @Override
