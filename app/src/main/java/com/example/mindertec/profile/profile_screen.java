@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -26,6 +27,8 @@ import com.example.mindertec.R;
 import com.example.mindertec.auth.session_manager_screen;
 import com.example.mindertec.menu.menu_screen;
 import com.example.mindertec.repositories.UserRepository;
+import com.example.mindertec.utils.LightSensorHelper;
+import com.example.mindertec.utils.ThemeHelper;
 import com.google.android.material.button.MaterialButton;
 import com.squareup.picasso.Picasso;
 
@@ -41,6 +44,8 @@ public class profile_screen extends AppCompatActivity {
     private MaterialButton btnCamera;
     private Uri photoUri;
     private Bitmap currentPhotoBitmap;
+    private LightSensorHelper lightSensorHelper;
+    private View rootView;
 
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 100;
 
@@ -51,9 +56,14 @@ public class profile_screen extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.profile);
+        
+        rootView = findViewById(android.R.id.content);
 
         sessionManager = new session_manager_screen(this);
         userRepository = new UserRepository(this);
+        
+        // Inicializar sensor de luz
+        initializeLightSensor();
 
         tvNombre = findViewById(R.id.tvNombre);
         tvCorreo = findViewById(R.id.tvCorreo);
@@ -278,6 +288,38 @@ public class profile_screen extends AppCompatActivity {
                 // No hacer nada si falla
             }
         });
+    }
+    
+    private void initializeLightSensor() {
+        lightSensorHelper = new LightSensorHelper(this);
+        
+        if (lightSensorHelper.isSensorAvailable()) {
+            lightSensorHelper.setLightChangeListener(isDarkMode -> {
+                runOnUiThread(() -> {
+                    // Cambiar solo el fondo según la luz
+                    if (rootView != null) {
+                        ThemeHelper.changeBackgroundOnly(rootView, isDarkMode);
+                    }
+                });
+            });
+            lightSensorHelper.startListening();
+        }
+    }
+    
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (lightSensorHelper != null && lightSensorHelper.isSensorAvailable()) {
+            lightSensorHelper.startListening();
+        }
+    }
+    
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (lightSensorHelper != null) {
+            lightSensorHelper.stopListening();
+        }
     }
 
 }

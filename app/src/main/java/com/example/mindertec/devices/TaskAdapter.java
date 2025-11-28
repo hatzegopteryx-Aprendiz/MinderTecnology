@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.example.mindertec.R;
 import com.example.mindertec.models.Task;
+import com.example.mindertec.utils.ThemeHelper;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.List;
@@ -17,6 +18,7 @@ public class TaskAdapter extends BaseAdapter {
     private OnTaskStateChangeListener listener;
     private android.content.Context context;
     private java.util.Set<String> processingTasks = new java.util.HashSet<>(); // Para evitar duplicados
+    private boolean isDarkMode = false; // Estado del sensor de luz
 
     public interface OnTaskStateChangeListener {
         void onTaskStateChanged(String taskId, String newState, String descripcionRealizada);
@@ -33,6 +35,17 @@ public class TaskAdapter extends BaseAdapter {
 
     public void setOnTaskStateChangeListener(OnTaskStateChangeListener listener) {
         this.listener = listener;
+    }
+    
+    /**
+     * Establece el modo oscuro/claro según el sensor de luz
+     * @param isDarkMode true = poca luz (tarjeta café), false = mucha luz (tarjeta blanca)
+     */
+    public void setDarkMode(boolean isDarkMode) {
+        if (this.isDarkMode != isDarkMode) {
+            this.isDarkMode = isDarkMode;
+            notifyDataSetChanged(); // Refrescar todas las vistas
+        }
     }
 
     @Override
@@ -70,6 +83,44 @@ public class TaskAdapter extends BaseAdapter {
         TextView tvFechaTermino = convertView.findViewById(R.id.tvFechaTermino);
         TextView tvEstado = convertView.findViewById(R.id.tvEstado);
         MaterialButton btnTerminar = convertView.findViewById(R.id.btnTerminar);
+        
+        // Obtener el LinearLayout interno de la tarjeta para aplicar el tema
+        // El CardView tiene un LinearLayout como hijo directo
+        android.widget.LinearLayout taskCardLayout = null;
+        if (convertView instanceof android.view.ViewGroup) {
+            android.view.ViewGroup cardView = (android.view.ViewGroup) convertView;
+            for (int i = 0; i < cardView.getChildCount(); i++) {
+                android.view.View child = cardView.getChildAt(i);
+                if (child instanceof android.widget.LinearLayout) {
+                    taskCardLayout = (android.widget.LinearLayout) child;
+                    break;
+                }
+            }
+        }
+        
+        // Aplicar colores según el sensor de luz
+        // Poca luz (< 50%): tarjeta café con letras blancas
+        // Mucha luz (> 50%): tarjeta blanca con letras café
+        int cardBackgroundColor = isDarkMode ? 0xFF6D4C41 : 0xFFFFFFFF; // Café o Blanco
+        int textColor = isDarkMode ? 0xFFFFFFFF : 0xFF5D4037; // Blanco o Café oscuro
+        int textColorSecondary = isDarkMode ? 0xFFFFFFFF : 0xFF8D6E63; // Blanco o Café medio
+        int textColorTertiary = isDarkMode ? 0xFFFFFFFF : 0xFF6D4C41; // Blanco o Café
+        
+        if (taskCardLayout != null) {
+            taskCardLayout.setBackgroundColor(cardBackgroundColor);
+        }
+        
+        // Aplicar colores a los textos (excepto los especiales: verde, naranja, azul)
+        if (tvDeviceName != null) {
+            tvDeviceName.setTextColor(textColor);
+        }
+        if (tvDescripcion != null) {
+            tvDescripcion.setTextColor(textColorSecondary);
+        }
+        if (tvFechaInicio != null) {
+            tvFechaInicio.setTextColor(textColorTertiary);
+        }
+        // tvFechaTermino y tvEstado mantienen sus colores especiales (verde y naranja/azul)
 
         if (tvDeviceName != null) {
             tvDeviceName.setText(task.getDeviceName() != null ? task.getDeviceName() : "Sin nombre");

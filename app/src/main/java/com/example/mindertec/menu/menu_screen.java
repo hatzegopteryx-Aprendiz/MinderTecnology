@@ -92,12 +92,6 @@ public class menu_screen extends AppCompatActivity {
         // Inicializar sensor de luz
         initializeLightSensor();
         
-        // Aplicar tema inicial basado en la luz actual
-        if (lightSensorHelper != null && lightSensorHelper.isSensorAvailable()) {
-            // Aplicar tema inicial (se actualizará cuando el sensor detecte cambios)
-            ThemeHelper.applyTheme(rootView, false); // Iniciar con modo claro por defecto
-        }
-        
         // Configurar DeviceController en TaskController para guardar historial
         DeviceController deviceController = new DeviceController(this);
         taskController.setDeviceController(deviceController);
@@ -437,6 +431,11 @@ public class menu_screen extends AppCompatActivity {
                     com.example.mindertec.devices.TaskAdapter adapter = 
                             new com.example.mindertec.devices.TaskAdapter(menu_screen.this, todayTasks);
                     
+                    // Aplicar estado inicial del sensor de luz al adapter
+                    if (lightSensorHelper != null) {
+                        adapter.setDarkMode(lightSensorHelper.isDarkMode());
+                    }
+                    
                     // Configurar listener para cambiar estado de tareas
                     adapter.setOnTaskStateChangeListener((taskId, newState, descripcionRealizada) -> {
                         if ("completada".equals(newState)) {
@@ -542,9 +541,17 @@ public class menu_screen extends AppCompatActivity {
         if (lightSensorHelper.isSensorAvailable()) {
             lightSensorHelper.setLightChangeListener(isDarkMode -> {
                 runOnUiThread(() -> {
-                    // Aplicar tema según la luz
+                    // Cambiar solo el fondo según la luz
                     if (rootView != null) {
-                        ThemeHelper.applyTheme(rootView, isDarkMode);
+                        ThemeHelper.changeBackgroundOnly(rootView, isDarkMode);
+                    }
+                    // Actualizar colores de las tarjetas de tareas en el dashboard
+                    android.widget.ListView listView = dashboardContent != null ? 
+                            dashboardContent.findViewById(R.id.listTodayTasks) : null;
+                    if (listView != null && listView.getAdapter() instanceof com.example.mindertec.devices.TaskAdapter) {
+                        com.example.mindertec.devices.TaskAdapter adapter = 
+                                (com.example.mindertec.devices.TaskAdapter) listView.getAdapter();
+                        adapter.setDarkMode(isDarkMode);
                     }
                 });
             });
@@ -567,7 +574,7 @@ public class menu_screen extends AppCompatActivity {
         }
         
         loadTodayTasks();
-        loadProfilePhoto();
+
         
         // Reiniciar sensor de luz si está disponible
         if (lightSensorHelper != null && lightSensorHelper.isSensorAvailable()) {

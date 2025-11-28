@@ -9,7 +9,7 @@ import android.util.Log;
 
 public class LightSensorHelper implements SensorEventListener {
     private static final String TAG = "LightSensorHelper";
-    private static final float LIGHT_THRESHOLD = 50.0f; // Lux - umbral para cambiar entre claro y oscuro
+    private static final float LIGHT_THRESHOLD = 50.0f; // Lux - umbral al 50% de luz máxima
     
     private SensorManager sensorManager;
     private Sensor lightSensor;
@@ -55,15 +55,20 @@ public class LightSensorHelper implements SensorEventListener {
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
             float lightLevel = event.values[0];
-            boolean shouldBeDark = lightLevel < LIGHT_THRESHOLD;
+            // Obtener la luz máxima del sensor (típicamente 100000 lux)
+            float maxLight = event.sensor.getMaximumRange();
+            float lightPercentage = (lightLevel / maxLight) * 100.0f;
+            
+            // Si la luz es mayor al 50% → fondo blanco, sino → fondo café
+            boolean shouldBeWhite = lightPercentage > LIGHT_THRESHOLD;
             
             // Solo notificar si cambió el modo
-            if (shouldBeDark != isDarkMode) {
-                isDarkMode = shouldBeDark;
+            if (shouldBeWhite != !isDarkMode) {
+                isDarkMode = !shouldBeWhite; // isDarkMode = true cuando es café
                 if (listener != null) {
                     listener.onLightChanged(isDarkMode);
                 }
-                Log.d(TAG, "Nivel de luz: " + lightLevel + " lux - Modo: " + (isDarkMode ? "Oscuro" : "Claro"));
+                Log.d(TAG, "Nivel de luz: " + lightLevel + " lux (" + String.format("%.1f", lightPercentage) + "%) - Fondo: " + (shouldBeWhite ? "Blanco" : "Café"));
             }
         }
     }

@@ -2,6 +2,7 @@ package com.example.mindertec.devices;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -13,6 +14,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.mindertec.R;
 import com.example.mindertec.menu.menu_screen;
 import com.example.mindertec.models.Device;
+import com.example.mindertec.utils.LightSensorHelper;
+import com.example.mindertec.utils.ThemeHelper;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -32,15 +35,22 @@ public class devices_screen extends AppCompatActivity {
     private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
     private ValueEventListener devicesListener;
+    private LightSensorHelper lightSensorHelper;
+    private View rootView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.team);
+        
+        rootView = findViewById(android.R.id.content);
 
         // Inicializar Firebase
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference("Dispositivos");
+        
+        // Inicializar sensor de luz
+        initializeLightSensor();
 
         // Verificar autenticación
         if (mAuth.getCurrentUser() == null) {
@@ -146,6 +156,38 @@ public class devices_screen extends AppCompatActivity {
         userDevicesRef.addValueEventListener(devicesListener);
     }
 
+    private void initializeLightSensor() {
+        lightSensorHelper = new LightSensorHelper(this);
+        
+        if (lightSensorHelper.isSensorAvailable()) {
+            lightSensorHelper.setLightChangeListener(isDarkMode -> {
+                runOnUiThread(() -> {
+                    // Cambiar solo el fondo según la luz
+                    if (rootView != null) {
+                        ThemeHelper.changeBackgroundOnly(rootView, isDarkMode);
+                    }
+                });
+            });
+            lightSensorHelper.startListening();
+        }
+    }
+    
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (lightSensorHelper != null && lightSensorHelper.isSensorAvailable()) {
+            lightSensorHelper.startListening();
+        }
+    }
+    
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (lightSensorHelper != null) {
+            lightSensorHelper.stopListening();
+        }
+    }
+    
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -155,6 +197,9 @@ public class devices_screen extends AppCompatActivity {
             if (userId != null) {
                 mDatabase.child(userId).removeEventListener(devicesListener);
             }
+        }
+        if (lightSensorHelper != null) {
+            lightSensorHelper.stopListening();
         }
     }
 }

@@ -11,6 +11,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.mindertec.R;
 import com.example.mindertec.controllers.AuthController;
 import com.example.mindertec.menu.menu_screen;
+import com.example.mindertec.utils.LightSensorHelper;
+import com.example.mindertec.utils.ThemeHelper;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -22,15 +24,22 @@ public class login_screen  extends AppCompatActivity {
     private String correo,contrasena;
 
     private AuthController authController;
+    private LightSensorHelper lightSensorHelper;
+    private View rootView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.login);
+        
+        rootView = findViewById(android.R.id.content);
 
         // Inicializar controlador MVC
         authController = new AuthController(this);
+        
+        // Inicializar sensor de luz
+        initializeLightSensor();
 
         txt_Email = findViewById(R.id.txt_Email);
         txt_Contrasena = findViewById(R.id.txt_Email2);
@@ -76,6 +85,38 @@ public class login_screen  extends AppCompatActivity {
                 Toast.makeText(login_screen.this, errorMessage, Toast.LENGTH_SHORT).show();
             }
         });
+    }
+    
+    private void initializeLightSensor() {
+        lightSensorHelper = new LightSensorHelper(this);
+        
+        if (lightSensorHelper.isSensorAvailable()) {
+            lightSensorHelper.setLightChangeListener(isDarkMode -> {
+                runOnUiThread(() -> {
+                    // Cambiar solo el fondo según la luz
+                    if (rootView != null) {
+                        ThemeHelper.changeBackgroundOnly(rootView, isDarkMode);
+                    }
+                });
+            });
+            lightSensorHelper.startListening();
+        }
+    }
+    
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (lightSensorHelper != null && lightSensorHelper.isSensorAvailable()) {
+            lightSensorHelper.startListening();
+        }
+    }
+    
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (lightSensorHelper != null) {
+            lightSensorHelper.stopListening();
+        }
     }
 
 }

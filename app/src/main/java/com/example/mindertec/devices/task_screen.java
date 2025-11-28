@@ -2,6 +2,7 @@ package com.example.mindertec.devices;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -15,6 +16,8 @@ import com.example.mindertec.controllers.TaskController;
 import com.example.mindertec.menu.menu_screen;
 import com.example.mindertec.models.Task;
 import com.example.mindertec.utils.LocationHelper;
+import com.example.mindertec.utils.LightSensorHelper;
+import com.example.mindertec.utils.ThemeHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,14 +29,21 @@ public class task_screen extends AppCompatActivity {
     private TaskAdapter taskAdapter;
     private TaskController taskController;
     private List<Task> taskList;
+    private LightSensorHelper lightSensorHelper;
+    private View rootView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.calendar);
+        
+        rootView = findViewById(android.R.id.content);
 
         // Inicializar controllers MVC
         taskController = new TaskController(this);
+        
+        // Inicializar sensor de luz primero
+        initializeLightSensor();
         
         // Configurar DeviceController en TaskController para guardar historial
         com.example.mindertec.controllers.DeviceController deviceController = 
@@ -42,6 +52,11 @@ public class task_screen extends AppCompatActivity {
         
         taskList = new ArrayList<>();
         taskAdapter = new TaskAdapter(this, taskList);
+        
+        // Aplicar estado inicial del sensor de luz al adapter
+        if (lightSensorHelper != null) {
+            taskAdapter.setDarkMode(lightSensorHelper.isDarkMode());
+        }
 
         // Inicializar vistas
         listActividades = findViewById(R.id.listActividades);
@@ -160,10 +175,42 @@ public class task_screen extends AppCompatActivity {
         });
     }
 
+    private void initializeLightSensor() {
+        lightSensorHelper = new LightSensorHelper(this);
+        
+        if (lightSensorHelper.isSensorAvailable()) {
+            lightSensorHelper.setLightChangeListener(isDarkMode -> {
+                runOnUiThread(() -> {
+                    // Cambiar solo el fondo según la luz
+                    if (rootView != null) {
+                        ThemeHelper.changeBackgroundOnly(rootView, isDarkMode);
+                    }
+                    // Actualizar colores de las tarjetas de tareas
+                    if (taskAdapter != null) {
+                        taskAdapter.setDarkMode(isDarkMode);
+                    }
+                });
+            });
+            lightSensorHelper.startListening();
+        }
+    }
+    
     @Override
     protected void onResume() {
         super.onResume();
         // Recargar tareas cuando se vuelve a la pantalla
         loadTasks();
+        
+        if (lightSensorHelper != null && lightSensorHelper.isSensorAvailable()) {
+            lightSensorHelper.startListening();
+        }
+    }
+    
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (lightSensorHelper != null) {
+            lightSensorHelper.stopListening();
+        }
     }
 }
